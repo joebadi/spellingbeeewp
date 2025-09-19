@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//mnt/c/Users/Joeey/Desktop/**)",
+      "Read(//mnt/c/Users/Joeey/Downloads/**)",
+      "Read(//mnt/c/Users/Joeey/Documents/wplugindev/**)",
+      "Bash(mkdir:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
