@@ -1,0 +1,405 @@
+/**
+ * Omafuru Spelling Bee - Public Styles
+ *
+ * Frontend styles for registration forms, event displays, and public pages
+ */
+
+/* Registration Form Styles */
+.osb-registration-form {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.osb-form-section {
+    margin-bottom: 30px;
+    padding: 20px;
+    border: 1px solid #e1e1e1;
+    border-radius: 5px;
+}
+
+.osb-form-section h3 {
+    margin-top: 0;
+    color: #2c3e50;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+}
+
+.osb-form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.osb-form-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.osb-form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #34495e;
+}
+
+.osb-form-group input,
+.osb-form-group select,
+.osb-form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.osb-form-group input:focus,
+.osb-form-group select:focus,
+.osb-form-group textarea:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.osb-required {
+    color: #e74c3c;
+}
+
+/* Button Styles */
+.osb-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    background: #3498db;
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.osb-btn:hover {
+    background: #2980b9;
+}
+
+.osb-btn-primary {
+    background: #3498db;
+}
+
+.osb-btn-success {
+    background: #27ae60;
+}
+
+.osb-btn-danger {
+    background: #e74c3c;
+}
+
+.osb-btn-secondary {
+    background: #95a5a6;
+}
+
+/* Progress Bar */
+.osb-progress {
+    width: 100%;
+    height: 20px;
+    background: #ecf0f1;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 20px 0;
+}
+
+.osb-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #3498db, #2ecc71);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+/* Step Indicators */
+.osb-steps {
+    display: flex;
+    justify-content: space-between;
+    margin: 30px 0;
+    padding: 0;
+    list-style: none;
+}
+
+.osb-step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+}
+
+.osb-step::before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background: #ecf0f1;
+    z-index: 1;
+}
+
+.osb-step:first-child::before {
+    display: none;
+}
+
+.osb-step-number {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    background: #ecf0f1;
+    color: #7f8c8d;
+    border-radius: 50%;
+    font-weight: bold;
+    position: relative;
+    z-index: 2;
+}
+
+.osb-step.completed .osb-step-number {
+    background: #27ae60;
+    color: white;
+}
+
+.osb-step.active .osb-step-number {
+    background: #3498db;
+    color: white;
+}
+
+.osb-step-title {
+    display: block;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #7f8c8d;
+}
+
+.osb-step.completed .osb-step-title,
+.osb-step.active .osb-step-title {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+/* Messages */
+.osb-message {
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 5px;
+    border-left: 4px solid;
+}
+
+.osb-message-success {
+    background: #d4edda;
+    border-color: #27ae60;
+    color: #155724;
+}
+
+.osb-message-error {
+    background: #f8d7da;
+    border-color: #e74c3c;
+    color: #721c24;
+}
+
+.osb-message-info {
+    background: #d1ecf1;
+    border-color: #3498db;
+    color: #0c5460;
+}
+
+.osb-message-warning {
+    background: #fff3cd;
+    border-color: #f39c12;
+    color: #856404;
+}
+
+/* Document Upload */
+.osb-upload-area {
+    border: 2px dashed #bdc3c7;
+    border-radius: 8px;
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+.osb-upload-area:hover,
+.osb-upload-area.dragover {
+    border-color: #3498db;
+    background: #f8fbff;
+}
+
+.osb-upload-icon {
+    font-size: 48px;
+    color: #bdc3c7;
+    margin-bottom: 15px;
+}
+
+.osb-upload-text {
+    color: #7f8c8d;
+    font-size: 16px;
+}
+
+.osb-file-list {
+    margin-top: 20px;
+}
+
+.osb-file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.osb-file-info {
+    flex: 1;
+}
+
+.osb-file-name {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.osb-file-size {
+    font-size: 12px;
+    color: #7f8c8d;
+}
+
+.osb-file-remove {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+/* Event Display */
+.osb-event-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.osb-event-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+.osb-event-title {
+    font-size: 28px;
+    margin: 0 0 10px 0;
+    font-weight: 700;
+}
+
+.osb-event-date {
+    font-size: 18px;
+    opacity: 0.9;
+}
+
+.osb-event-content {
+    padding: 30px;
+}
+
+.osb-event-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.osb-info-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 5px;
+}
+
+.osb-info-icon {
+    margin-right: 15px;
+    font-size: 20px;
+    color: #3498db;
+    width: 30px;
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .osb-registration-form {
+        margin: 10px;
+        padding: 15px;
+    }
+
+    .osb-form-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .osb-form-group {
+        min-width: auto;
+    }
+
+    .osb-steps {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .osb-step::before {
+        display: none;
+    }
+
+    .osb-event-info {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Loading States */
+.osb-loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.osb-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #3498db;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: osb-spin 1s linear infinite;
+}
+
+@keyframes osb-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Utility Classes */
+.osb-text-center { text-align: center; }
+.osb-text-left { text-align: left; }
+.osb-text-right { text-align: right; }
+.osb-hidden { display: none; }
+.osb-mt-10 { margin-top: 10px; }
+.osb-mt-20 { margin-top: 20px; }
+.osb-mb-10 { margin-bottom: 10px; }
+.osb-mb-20 { margin-bottom: 20px; }

@@ -22,6 +22,9 @@ class OSB_Activator {
         // Upgrade database schema if needed
         self::upgradeDatabaseSchema();
 
+        // Run database migrations
+        OSB_Database_Migration::migrate();
+
         // Create custom user roles
         self::createUserRoles();
 
