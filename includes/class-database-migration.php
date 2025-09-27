@@ -15,7 +15,7 @@ class OSB_Database_Migration {
     /**
      * Current database version
      */
-    const DB_VERSION = '1.2.2';
+    const DB_VERSION = '1.3.0';
 
     /**
      * Run necessary database migrations
@@ -51,6 +51,11 @@ class OSB_Database_Migration {
         // Migration for version 1.2.2 - Add missing student columns
         if (version_compare($current_version, '1.2.2', '<')) {
             self::migration_1_2_2();
+        }
+
+        // Migration for version 1.3.0 - Enhanced EOI and Digital Signatures
+        if (version_compare($current_version, '1.3.0', '<')) {
+            self::migration_1_3_0();
         }
     }
 
@@ -267,6 +272,134 @@ class OSB_Database_Migration {
     public static function generateResumeUrl($registration_token, $event_id) {
         $event_url = home_url('/events/' . $event_id . '/register/');
         return add_query_arg('resume', $registration_token, $event_url);
+    }
+
+    /**
+     * Migration 1.3.0 - Enhanced EOI and Digital Signatures
+     */
+    private static function migration_1_3_0() {
+        global $wpdb;
+        $table_prefix = $wpdb->prefix . OSB_TABLE_PREFIX;
+
+        $success = true;
+
+        // Add digital signature and enhanced EOI columns to registrations table
+        $registrations_columns = [
+            'digital_signature' => "LONGTEXT NULL COMMENT 'Base64 encoded signature data'",
+            'signature_timestamp' => "TIMESTAMP NULL COMMENT 'When signature was captured'",
+            'eoi_form_data' => "JSON NULL COMMENT 'Complete EOI form responses'",
+            'submission_device_info' => "VARCHAR(500) NULL COMMENT 'Device/browser info for audit'",
+            'signature_ip_address' => "VARCHAR(45) NULL COMMENT 'IP address when signature was captured'",
+            'form_completion_time' => "INT NULL COMMENT 'Time taken to complete form in seconds'"
+        ];
+
+        foreach ($registrations_columns as $column_name => $column_definition) {
+            $column_exists = $wpdb->get_results("SHOW COLUMNS FROM {$table_prefix}registrations LIKE '{$column_name}'");
+
+            if (empty($column_exists)) {
+                $sql = "ALTER TABLE {$table_prefix}registrations ADD COLUMN {$column_name} {$column_definition}";
+                $result = $wpdb->query($sql);
+
+                if ($result === false) {
+                    error_log("OSB Migration 1.3.0 failed adding {$column_name}: " . $wpdb->last_error);
+                    $success = false;
+                } else {
+                    error_log("OSB Migration 1.3.0 successfully added {$column_name} column");
+                }
+            } else {
+                error_log("OSB Migration 1.3.0 skipped {$column_name} - column already exists");
+            }
+        }
+
+        // Add draw_date and notification settings to events table
+        $events_columns = [
+            'draw_date' => "DATETIME NULL COMMENT 'Date for group draws'",
+            'notification_settings' => "JSON NULL COMMENT 'Multi-channel notification preferences'"
+        ];
+
+        foreach ($events_columns as $column_name => $column_definition) {
+            $column_exists = $wpdb->get_results("SHOW COLUMNS FROM {$table_prefix}events LIKE '{$column_name}'");
+
+            if (empty($column_exists)) {
+                $sql = "ALTER TABLE {$table_prefix}events ADD COLUMN {$column_name} {$column_definition}";
+                $result = $wpdb->query($sql);
+
+                if ($result === false) {
+                    error_log("OSB Migration 1.3.0 failed adding {$column_name} to events: " . $wpdb->last_error);
+                    $success = false;
+                } else {
+                    error_log("OSB Migration 1.3.0 successfully added {$column_name} to events table");
+                }
+            }
+        }
+
+        // Create notification queue table
+        $notification_queue_sql = "CREATE TABLE IF NOT EXISTS {$table_prefix}notification_queue (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            event_id INT NOT NULL,
+            school_id INT NOT NULL,
+            notification_type ENUM('email','sms','whatsapp') NOT NULL,
+            template_name VARCHAR(100) NOT NULL,
+            message_data JSON NULL,
+            scheduled_at DATETIME NOT NULL,
+            sent_at TIMESTAMP NULL,
+            status ENUM('pending','sent','failed','retry') DEFAULT 'pending',
+            delivery_info JSON NULL,
+            retry_count INT DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_status (status),
+            INDEX idx_scheduled (scheduled_at),
+            INDEX idx_event_school (event_id, school_id),
+            FOREIGN KEY (event_id) REFERENCES {$table_prefix}events(id) ON DELETE CASCADE,
+            FOREIGN KEY (school_id) REFERENCES {$table_prefix}schools(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+
+        $result = $wpdb->query($notification_queue_sql);
+        if ($result === false) {
+            error_log("OSB Migration 1.3.0 failed creating notification_queue table: " . $wpdb->last_error);
+            $success = false;
+        } else {
+            error_log("OSB Migration 1.3.0 successfully created notification_queue table");
+        }
+
+        // Create notification history table
+        $notification_history_sql = "CREATE TABLE IF NOT EXISTS {$table_prefix}notification_history (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            event_id INT NOT NULL,
+            notification_type VARCHAR(50) NOT NULL,
+            recipient_count INT NOT NULL,
+            sent_by INT NOT NULL,
+            sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            message_template VARCHAR(100),
+            delivery_summary JSON NULL,
+            INDEX idx_event (event_id),
+            INDEX idx_sent_by (sent_by),
+            FOREIGN KEY (event_id) REFERENCES {$table_prefix}events(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+
+        $result = $wpdb->query($notification_history_sql);
+        if ($result === false) {
+            error_log("OSB Migration 1.3.0 failed creating notification_history table: " . $wpdb->last_error);
+            $success = false;
+        } else {
+            error_log("OSB Migration 1.3.0 successfully created notification_history table");
+        }
+
+        // Update existing registrations to disable upload requirement for EOI
+        $update_sql = "UPDATE {$table_prefix}registrations
+                       SET step_progress = JSON_SET(
+                           COALESCE(step_progress, '{}'),
+                           '$.eoi_requires_upload', false,
+                           '$.eoi_digital_form', true
+                       )
+                       WHERE step_progress IS NOT NULL";
+        $wpdb->query($update_sql);
+
+        if ($success) {
+            error_log('OSB Migration 1.3.0 completed successfully - Enhanced EOI and Digital Signatures');
+        }
+
+        return $success;
     }
 }
 

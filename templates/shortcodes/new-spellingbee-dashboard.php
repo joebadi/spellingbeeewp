@@ -196,116 +196,13 @@ if (!($registration || $school)) {
             </div>
 
         <?php elseif ($current_step === 2): ?>
-            <!-- Step 2: Expression of Interest -->
+            <!-- Step 2: Enhanced Expression of Interest -->
             <div class="osb-step-panel" id="step-2">
-                <div class="osb-step-header">
-                    <div class="osb-step-badge">
-                        <span class="osb-step-number">2</span>
-                        <span class="osb-step-title">Expression of Interest</span>
-                    </div>
-                    <p class="osb-step-description">Complete this step to express your school's interest in participating in the spelling bee competition.</p>
-                </div>
-
-                <div class="osb-eoi-workflow">
-                    <!-- Step 1: Download -->
-                    <div class="osb-workflow-step osb-download-section">
-                        <div class="osb-workflow-header">
-                            <div class="osb-workflow-icon">
-                                <div class="osb-icon-circle">
-                                    <span>📋</span>
-                                </div>
-                            </div>
-                            <div class="osb-workflow-content">
-                                <h3>Download Expression of Interest Form</h3>
-                                <p>Download the official form template to get started</p>
-                            </div>
-                        </div>
-                        <div class="osb-workflow-action">
-                            <button class="osb-btn osb-btn-download osb-download-eoi" data-template="expression-of-interest">
-                                <span class="osb-btn-icon">📥</span>
-                                <span class="osb-btn-text">Download Form (PDF)</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Arrow -->
-                    <div class="osb-workflow-arrow">
-                        <span>→</span>
-                    </div>
-
-                    <!-- Step 2: Fill -->
-                    <div class="osb-workflow-step osb-fill-section">
-                        <div class="osb-workflow-header">
-                            <div class="osb-workflow-icon">
-                                <div class="osb-icon-circle">
-                                    <span>✍️</span>
-                                </div>
-                            </div>
-                            <div class="osb-workflow-content">
-                                <h3>Complete the Form</h3>
-                                <p>Fill out all required information and save the completed form</p>
-                            </div>
-                        </div>
-                        <div class="osb-workflow-action">
-                            <div class="osb-instruction-badge">
-                                <span>Complete offline and save</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Arrow -->
-                    <div class="osb-workflow-arrow">
-                        <span>→</span>
-                    </div>
-
-                    <!-- Step 3: Upload -->
-                    <div class="osb-workflow-step osb-upload-section">
-                        <div class="osb-workflow-header">
-                            <div class="osb-workflow-icon">
-                                <div class="osb-icon-circle">
-                                    <span>📤</span>
-                                </div>
-                            </div>
-                            <div class="osb-workflow-content">
-                                <h3>Upload Completed Form</h3>
-                                <p>Upload your completed Expression of Interest form</p>
-                            </div>
-                        </div>
-                        <div class="osb-workflow-action">
-                            <form id="osb-eoi-upload-form" enctype="multipart/form-data">
-                                <div class="osb-file-upload-modern">
-                                    <div class="osb-upload-zone" id="eoi-dropzone">
-                                        <div class="osb-upload-content">
-                                            <div class="osb-upload-icon">📄</div>
-                                            <div class="osb-upload-text">
-                                                <strong>Click to browse</strong> or drag & drop your file
-                                                <small>PDF format, maximum 5MB</small>
-                                            </div>
-                                        </div>
-                                        <input type="file" id="eoi-file-input" name="eoi_document" accept=".pdf" style="position: absolute; left: -9999px; opacity: 0; width: 1px; height: 1px;">
-                                    </div>
-                                    <div class="osb-file-info" id="eoi-file-info" style="display: none;">
-                                        <div class="osb-file-details">
-                                            <span class="osb-file-name"></span>
-                                            <span class="osb-file-size"></span>
-                                        </div>
-                                        <button type="button" class="osb-remove-file" id="eoi-remove-file">✕</button>
-                                    </div>
-                                </div>
-                                <div class="osb-upload-actions">
-                                    <button type="button" class="osb-btn osb-btn-secondary osb-btn-large" onclick="goBackToStep(1)">
-                                        <span class="osb-btn-icon">⬅️</span>
-                                        <span class="osb-btn-text">Back to Competition Selection</span>
-                                    </button>
-                                    <button type="submit" class="osb-btn osb-btn-primary osb-btn-large" id="eoi-submit-btn" disabled>
-                                        <span class="osb-btn-icon">🚀</span>
-                                        <span class="osb-btn-text">Upload & Continue to Next Step</span>
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+                <?php
+                // Include the enhanced EOI form
+                $event = $current_event;
+                include OSB_PLUGIN_PATH . 'templates/shortcodes/enhanced-eoi-form.php';
+                ?>
             </div>
 
         <?php elseif ($current_step === 3): ?>

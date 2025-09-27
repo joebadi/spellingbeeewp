@@ -233,7 +233,8 @@ class SpellingBeePro {
                 'includes/class-shortcodes.php',
                 'includes/class-database-migration.php',
                 'includes/class-school-classifier.php',
-                'includes/class-workflow-automation.php'
+                'includes/class-workflow-automation.php',
+                'includes/class-eoi-processor.php'
             ];
 
             foreach ($core_files as $file) {
@@ -420,10 +421,27 @@ class SpellingBeePro {
             OSB_PLUGIN_VERSION
         );
 
+        // Enqueue Enhanced EOI Form CSS
+        wp_enqueue_style(
+            'osb-eoi-form-mobile',
+            OSB_PLUGIN_URL . 'public/css/eoi-form-mobile.css',
+            array('osb-public-style'),
+            OSB_PLUGIN_VERSION
+        );
+
         wp_enqueue_script(
             'osb-public-script',
             OSB_PLUGIN_URL . 'public/js/public-script.js',
             array('jquery'),
+            OSB_PLUGIN_VERSION,
+            true
+        );
+
+        // Enqueue Signature Capture JavaScript
+        wp_enqueue_script(
+            'osb-signature-capture',
+            OSB_PLUGIN_URL . 'public/js/signature-capture.js',
+            array('jquery', 'osb-public-script'),
             OSB_PLUGIN_VERSION,
             true
         );
