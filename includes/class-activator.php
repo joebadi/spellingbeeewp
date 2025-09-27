@@ -34,17 +34,20 @@ class OSB_Activator {
         // Create upload directories
         self::createUploadDirectories();
 
+        // Create necessary pages
+        self::createPluginPages();
+
         // Set plugin version
         update_option('osb_plugin_version', OSB_PLUGIN_VERSION);
 
         // Set activation timestamp
         update_option('osb_activation_time', current_time('timestamp'));
 
-        // Flush rewrite rules
+        // Flush rewrite rules (after pages are created)
         flush_rewrite_rules();
 
         // Log activation
-        error_log('Omafuru Spelling Bee Plugin activated successfully');
+        error_log('Spelling Bee Pro Plugin activated successfully');
     }
 
     /**
@@ -78,6 +81,7 @@ class OSB_Activator {
             registration_deadline date DEFAULT NULL,
             max_schools int(11) DEFAULT NULL,
             max_students_per_school int(11) DEFAULT 5,
+            min_students_per_school int(11) DEFAULT 3,
             prize_fund_goal decimal(10,2) DEFAULT 0.00,
             base_prize_first decimal(10,2) DEFAULT 0.00,
             base_prize_second decimal(10,2) DEFAULT 0.00,
@@ -362,7 +366,8 @@ class OSB_Activator {
             'venue_name' => "ALTER TABLE {$table_name} ADD COLUMN venue_name varchar(255) DEFAULT NULL AFTER venue",
             'venue_address' => "ALTER TABLE {$table_name} ADD COLUMN venue_address text DEFAULT NULL AFTER venue_name",
             'registration_deadline' => "ALTER TABLE {$table_name} ADD COLUMN registration_deadline date DEFAULT NULL AFTER registration_end_date",
-            'prize_fund_goal' => "ALTER TABLE {$table_name} ADD COLUMN prize_fund_goal decimal(10,2) DEFAULT 0.00 AFTER max_students_per_school",
+            'min_students_per_school' => "ALTER TABLE {$table_name} ADD COLUMN min_students_per_school int(11) DEFAULT 3 AFTER max_students_per_school",
+            'prize_fund_goal' => "ALTER TABLE {$table_name} ADD COLUMN prize_fund_goal decimal(10,2) DEFAULT 0.00 AFTER min_students_per_school",
             'flyer_url' => "ALTER TABLE {$table_name} ADD COLUMN flyer_url varchar(500) DEFAULT NULL AFTER total_donations"
         );
 
@@ -375,6 +380,42 @@ class OSB_Activator {
 
         // Update status enum to include 'cancelled'
         $wpdb->query("ALTER TABLE {$table_name} MODIFY COLUMN status enum('upcoming','live','completed','cancelled') DEFAULT 'upcoming'");
+
+        // Also upgrade schools table
+        self::upgradeSchoolsTable();
+    }
+
+    /**
+     * Upgrade schools table schema if needed
+     */
+    public static function upgradeSchoolsTable() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'osb_schools';
+
+        // Check if we need to add missing columns
+        $columns = $wpdb->get_col("DESCRIBE {$table_name}", 0);
+
+        $required_columns = array(
+            'temp_token' => "ALTER TABLE {$table_name} ADD COLUMN temp_token varchar(64) DEFAULT NULL AFTER contact_email",
+            'city' => "ALTER TABLE {$table_name} ADD COLUMN city varchar(100) DEFAULT NULL AFTER address",
+            'postal_code' => "ALTER TABLE {$table_name} ADD COLUMN postal_code varchar(20) DEFAULT NULL AFTER city",
+            'country' => "ALTER TABLE {$table_name} ADD COLUMN country varchar(100) DEFAULT 'Nigeria' AFTER postal_code"
+        );
+
+        // Add missing columns
+        foreach ($required_columns as $column => $sql) {
+            if (!in_array($column, $columns)) {
+                $wpdb->query($sql);
+            }
+        }
+
+        // Add index for temp_token
+        $indexes = $wpdb->get_results("SHOW INDEX FROM {$table_name}");
+        $index_names = array_column($indexes, 'Key_name');
+
+        if (!in_array('idx_temp_token', $index_names)) {
+            $wpdb->query("ALTER TABLE {$table_name} ADD KEY idx_temp_token (temp_token)");
+        }
     }
 
     /**
@@ -382,7 +423,7 @@ class OSB_Activator {
      */
     private static function createUserRoles() {
         // School Representative role
-        add_role('school_representative', __('School Representative', 'omafuru-spelling-bee'), array(
+        add_role('school_representative', __('School Representative', 'spelling-bee-pro'), array(
             'read' => true,
             'osb_manage_school' => true,
             'osb_register_students' => true,
@@ -391,14 +432,14 @@ class OSB_Activator {
         ));
 
         // Student role
-        add_role('student', __('Student', 'omafuru-spelling-bee'), array(
+        add_role('student', __('Student', 'spelling-bee-pro'), array(
             'read' => true,
             'osb_view_competition_info' => true,
             'osb_view_own_data' => true,
         ));
 
         // Parent Guardian role
-        add_role('parent_guardian', __('Parent Guardian', 'omafuru-spelling-bee'), array(
+        add_role('parent_guardian', __('Parent Guardian', 'spelling-bee-pro'), array(
             'read' => true,
             'osb_view_children_data' => true,
             'osb_provide_consent' => true,
@@ -442,7 +483,7 @@ class OSB_Activator {
             'osb_donation_enabled' => 1,
             'osb_prize_distribution' => json_encode(array('first' => 50, 'second' => 30, 'third' => 20)),
             'osb_contact_email' => get_option('admin_email'),
-            'osb_organization_name' => 'Omafuru Foundation',
+            'osb_organization_name' => 'Spelling Bee Organization',
         );
 
         foreach ($default_options as $option_name => $option_value) {
@@ -463,7 +504,7 @@ class OSB_Activator {
             'certificates'
         );
 
-        $upload_base = wp_upload_dir()['basedir'] . '/omafuru-spelling-bee/';
+        $upload_base = wp_upload_dir()['basedir'] . '/spelling-bee-pro/';
 
         foreach ($upload_dirs as $dir) {
             $full_path = $upload_base . $dir;
@@ -479,6 +520,56 @@ class OSB_Activator {
             $htaccess_content .= "</Files>\n";
 
             file_put_contents($full_path . '/.htaccess', $htaccess_content);
+        }
+    }
+
+    /**
+     * Create necessary plugin pages
+     */
+    private static function createPluginPages() {
+        $pages = array(
+            array(
+                'title' => 'SpellingBee Dashboard',
+                'slug' => 'spellingbee-dashboard',
+                'content' => '[osb_spellingbee_dashboard]',
+                'option_name' => 'osb_dashboard_page_id'
+            ),
+            array(
+                'title' => 'Registration Status',
+                'slug' => 'registration-status',
+                'content' => '[osb_registration_status]',
+                'option_name' => 'osb_registration_status_page_id'
+            )
+        );
+
+        foreach ($pages as $page_data) {
+            // Check if page already exists
+            $existing_page_id = get_option($page_data['option_name']);
+            $existing_page = $existing_page_id ? get_post($existing_page_id) : null;
+
+            if (!$existing_page || $existing_page->post_status !== 'publish') {
+                // Create the page
+                $page_id = wp_insert_post(array(
+                    'post_title' => $page_data['title'],
+                    'post_name' => $page_data['slug'],
+                    'post_content' => $page_data['content'],
+                    'post_status' => 'publish',
+                    'post_type' => 'page',
+                    'post_author' => 1,
+                    'comment_status' => 'closed',
+                    'ping_status' => 'closed'
+                ));
+
+                if ($page_id && !is_wp_error($page_id)) {
+                    // Store the page ID for future reference
+                    update_option($page_data['option_name'], $page_id);
+                    error_log("Created page: {$page_data['title']} (ID: {$page_id})");
+                } else {
+                    error_log("Failed to create page: {$page_data['title']}");
+                }
+            } else {
+                error_log("Page already exists: {$page_data['title']} (ID: {$existing_page_id})");
+            }
         }
     }
 }

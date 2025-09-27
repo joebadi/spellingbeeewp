@@ -23,7 +23,7 @@ class OSB_Deactivator {
         flush_rewrite_rules();
 
         // Log deactivation
-        error_log('Omafuru Spelling Bee Plugin deactivated');
+        error_log('Spelling Bee Pro Plugin deactivated');
 
         // Note: We don't remove user roles or database tables on deactivation
         // This preserves data in case of accidental deactivation
@@ -82,7 +82,7 @@ class OSB_Deactivator {
         self::clearScheduledEvents();
 
         // Log uninstallation
-        error_log('Omafuru Spelling Bee Plugin completely uninstalled');
+        error_log('Spelling Bee Pro Plugin completely uninstalled');
     }
 
     /**
@@ -179,7 +179,7 @@ class OSB_Deactivator {
      * Remove uploaded files
      */
     private static function removeUploadedFiles() {
-        $upload_base = wp_upload_dir()['basedir'] . '/omafuru-spelling-bee/';
+        $upload_base = wp_upload_dir()['basedir'] . '/spelling-bee-pro/';
 
         if (is_dir($upload_base)) {
             self::removeDirectory($upload_base);
@@ -206,5 +206,28 @@ class OSB_Deactivator {
         }
 
         rmdir($dir);
+    }
+
+    /**
+     * Remove plugin pages (only if explicitly requested)
+     * Note: Called only during uninstall, not deactivation
+     */
+    public static function removePluginPages() {
+        $page_options = array(
+            'osb_dashboard_page_id',
+            'osb_registration_status_page_id'
+        );
+
+        foreach ($page_options as $option_name) {
+            $page_id = get_option($option_name);
+            if ($page_id) {
+                $page = get_post($page_id);
+                if ($page && $page->post_type === 'page') {
+                    wp_delete_post($page_id, true); // Force delete (skip trash)
+                    error_log("Removed page: {$page->post_title} (ID: {$page_id})");
+                }
+                delete_option($option_name);
+            }
+        }
     }
 }

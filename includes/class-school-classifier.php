@@ -250,10 +250,10 @@ class OSB_School_Classifier {
      */
     public function getClassificationLabel($classification) {
         $labels = array(
-            self::CLASSIFICATION_NEW => __('New School', 'omafuru-spelling-bee'),
-            self::CLASSIFICATION_RETURNING => __('Returning School', 'omafuru-spelling-bee'),
-            self::CLASSIFICATION_VERIFIED => __('Verified School', 'omafuru-spelling-bee'),
-            self::CLASSIFICATION_PREMIUM => __('Premium School', 'omafuru-spelling-bee')
+            self::CLASSIFICATION_NEW => __('New School', 'spelling-bee-pro'),
+            self::CLASSIFICATION_RETURNING => __('Returning School', 'spelling-bee-pro'),
+            self::CLASSIFICATION_VERIFIED => __('Verified School', 'spelling-bee-pro'),
+            self::CLASSIFICATION_PREMIUM => __('Premium School', 'spelling-bee-pro')
         );
 
         return $labels[$classification] ?? $labels[self::CLASSIFICATION_NEW];
@@ -265,30 +265,30 @@ class OSB_School_Classifier {
     public function getClassificationBenefits($classification) {
         $benefits = array(
             self::CLASSIFICATION_NEW => array(
-                __('Welcome package with guidelines', 'omafuru-spelling-bee'),
-                __('Step-by-step registration assistance', 'omafuru-spelling-bee'),
-                __('Access to tutorial resources', 'omafuru-spelling-bee')
+                __('Welcome package with guidelines', 'spelling-bee-pro'),
+                __('Step-by-step registration assistance', 'spelling-bee-pro'),
+                __('Access to tutorial resources', 'spelling-bee-pro')
             ),
             self::CLASSIFICATION_RETURNING => array(
-                __('Pre-filled registration forms', 'omafuru-spelling-bee'),
-                __('Previous student data available', 'omafuru-spelling-bee'),
-                __('Streamlined document upload', 'omafuru-spelling-bee'),
-                __('Registration history access', 'omafuru-spelling-bee')
+                __('Pre-filled registration forms', 'spelling-bee-pro'),
+                __('Previous student data available', 'spelling-bee-pro'),
+                __('Streamlined document upload', 'spelling-bee-pro'),
+                __('Registration history access', 'spelling-bee-pro')
             ),
             self::CLASSIFICATION_VERIFIED => array(
-                __('Priority review process', 'omafuru-spelling-bee'),
-                __('Auto-filled school information', 'omafuru-spelling-bee'),
-                __('Dedicated support contact', 'omafuru-spelling-bee'),
-                __('Advanced registration analytics', 'omafuru-spelling-bee'),
-                __('Early access to new features', 'omafuru-spelling-bee')
+                __('Priority review process', 'spelling-bee-pro'),
+                __('Auto-filled school information', 'spelling-bee-pro'),
+                __('Dedicated support contact', 'spelling-bee-pro'),
+                __('Advanced registration analytics', 'spelling-bee-pro'),
+                __('Early access to new features', 'spelling-bee-pro')
             ),
             self::CLASSIFICATION_PREMIUM => array(
-                __('Express registration approval', 'omafuru-spelling-bee'),
-                __('Automatic document pre-validation', 'omafuru-spelling-bee'),
-                __('Premium support priority', 'omafuru-spelling-bee'),
-                __('Advanced analytics dashboard', 'omafuru-spelling-bee'),
-                __('Beta feature access', 'omafuru-spelling-bee'),
-                __('Personalized success manager', 'omafuru-spelling-bee')
+                __('Express registration approval', 'spelling-bee-pro'),
+                __('Automatic document pre-validation', 'spelling-bee-pro'),
+                __('Premium support priority', 'spelling-bee-pro'),
+                __('Advanced analytics dashboard', 'spelling-bee-pro'),
+                __('Beta feature access', 'spelling-bee-pro'),
+                __('Personalized success manager', 'spelling-bee-pro')
             )
         );
 

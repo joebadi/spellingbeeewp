@@ -196,7 +196,7 @@ class OSB_Donation_Calculator {
 
         // Validate donation amount
         if (!$this->isValidDonationAmount($donation_data['amount'])) {
-            return new WP_Error('invalid_amount', __('Invalid donation amount.', 'omafuru-spelling-bee'));
+            return new WP_Error('invalid_amount', __('Invalid donation amount.', 'spelling-bee-pro'));
         }
 
         // Get current event if not specified
@@ -204,7 +204,7 @@ class OSB_Donation_Calculator {
             $db = OSB_Database::getInstance();
             $current_event = $db->getCurrentEvent();
             if (!$current_event) {
-                return new WP_Error('no_active_event', __('No active event found.', 'omafuru-spelling-bee'));
+                return new WP_Error('no_active_event', __('No active event found.', 'spelling-bee-pro'));
             }
             $donation_data['event_id'] = $current_event->id;
         }
@@ -233,7 +233,7 @@ class OSB_Donation_Calculator {
         $result = $wpdb->insert($table_name, $insert_data);
 
         if ($result === false) {
-            return new WP_Error('database_error', __('Failed to save donation record.', 'omafuru-spelling-bee'));
+            return new WP_Error('database_error', __('Failed to save donation record.', 'spelling-bee-pro'));
         }
 
         $donation_id = $wpdb->insert_id;
@@ -261,7 +261,7 @@ class OSB_Donation_Calculator {
             'donation_id' => $donation_id,
             'transaction_reference' => $transaction_ref,
             'status' => 'pending',
-            'message' => __('Donation processed successfully. You will receive a confirmation email shortly.', 'omafuru-spelling-bee')
+            'message' => __('Donation processed successfully. You will receive a confirmation email shortly.', 'spelling-bee-pro')
         );
     }
 
@@ -295,7 +295,7 @@ class OSB_Donation_Calculator {
 
             return true;
         } else {
-            return new WP_Error('payment_failed', __('Payment processing failed.', 'omafuru-spelling-bee'));
+            return new WP_Error('payment_failed', __('Payment processing failed.', 'spelling-bee-pro'));
         }
     }
 
@@ -315,11 +315,11 @@ class OSB_Donation_Calculator {
         );
 
         if (!$donation) {
-            return new WP_Error('donation_not_found', __('Donation record not found.', 'omafuru-spelling-bee'));
+            return new WP_Error('donation_not_found', __('Donation record not found.', 'spelling-bee-pro'));
         }
 
         if ($donation->status !== 'completed') {
-            return new WP_Error('invalid_status', __('Only completed donations can be refunded.', 'omafuru-spelling-bee'));
+            return new WP_Error('invalid_status', __('Only completed donations can be refunded.', 'spelling-bee-pro'));
         }
 
         // Process refund (integrate with payment gateway)
@@ -345,7 +345,7 @@ class OSB_Donation_Calculator {
             return true;
         }
 
-        return new WP_Error('refund_failed', __('Refund processing failed.', 'omafuru-spelling-bee'));
+        return new WP_Error('refund_failed', __('Refund processing failed.', 'spelling-bee-pro'));
     }
 
     /**
@@ -418,16 +418,16 @@ class OSB_Donation_Calculator {
             'event_title' => $donation->event_title,
             'transaction_reference' => $donation->transaction_reference,
             'donation_date' => date('F j, Y', strtotime($donation->created_at)),
-            'organization_name' => get_option('osb_organization_name', 'Omafuru Foundation'),
+            'organization_name' => get_option('osb_organization_name', 'Spelling Bee Organization'),
         );
 
         $subject = sprintf(
-            __('Thank you for your donation - %s', 'omafuru-spelling-bee'),
+            __('Thank you for your donation - %s', 'spelling-bee-pro'),
             $template_data['organization_name']
         );
 
         $message = sprintf(
-            __("Dear %s,\n\nThank you for your generous donation of %s to support %s.\n\nDonation Details:\n- Amount: %s\n- Event: %s\n- Transaction Reference: %s\n- Date: %s\n\nYour contribution helps make this competition possible and supports educational excellence.\n\nBest regards,\n%s Team", 'omafuru-spelling-bee'),
+            __("Dear %s,\n\nThank you for your generous donation of %s to support %s.\n\nDonation Details:\n- Amount: %s\n- Event: %s\n- Transaction Reference: %s\n- Date: %s\n\nYour contribution helps make this competition possible and supports educational excellence.\n\nBest regards,\n%s Team", 'spelling-bee-pro'),
             $template_data['donor_name'],
             $template_data['amount'],
             $template_data['event_title'],
@@ -469,16 +469,16 @@ class OSB_Donation_Calculator {
             'amount' => $this->formatCurrency($donation->amount, $donation->currency),
             'transaction_reference' => $donation->transaction_reference,
             'refund_reason' => $donation->refund_reason,
-            'organization_name' => get_option('osb_organization_name', 'Omafuru Foundation'),
+            'organization_name' => get_option('osb_organization_name', 'Spelling Bee Organization'),
         );
 
         $subject = sprintf(
-            __('Donation Refund Processed - %s', 'omafuru-spelling-bee'),
+            __('Donation Refund Processed - %s', 'spelling-bee-pro'),
             $template_data['organization_name']
         );
 
         $message = sprintf(
-            __("Dear %s,\n\nYour donation refund has been processed.\n\nRefund Details:\n- Amount: %s\n- Transaction Reference: %s\n- Reason: %s\n\nThe refund will appear in your original payment method within 3-5 business days.\n\nThank you for your understanding.\n\nBest regards,\n%s Team", 'omafuru-spelling-bee'),
+            __("Dear %s,\n\nYour donation refund has been processed.\n\nRefund Details:\n- Amount: %s\n- Transaction Reference: %s\n- Reason: %s\n\nThe refund will appear in your original payment method within 3-5 business days.\n\nThank you for your understanding.\n\nBest regards,\n%s Team", 'spelling-bee-pro'),
             $template_data['donor_name'],
             $template_data['amount'],
             $template_data['transaction_reference'],
@@ -528,7 +528,7 @@ class OSB_Donation_Calculator {
         $total_percentage = array_sum($distribution);
 
         if ($total_percentage != 100) {
-            return new WP_Error('invalid_distribution', __('Prize distribution percentages must add up to 100%.', 'omafuru-spelling-bee'));
+            return new WP_Error('invalid_distribution', __('Prize distribution percentages must add up to 100%.', 'spelling-bee-pro'));
         }
 
         update_option('osb_prize_distribution', $distribution);

@@ -478,6 +478,313 @@ Phase 1 → Phase 2 → Phase 3 → Phase 4 → Phase 5
 
 ---
 
-*Last Updated: $(date)*
-*Version: 1.0*
-*Next Review: After Phase 1 Completion*
+## 🎯 **PHASE 6: COMPETITION STAGES OVERHAUL (CURRENT PRIORITY)**
+*Revolutionary competition management system - December 2024*
+
+### ✅ **Task 6.1: Enhanced Expression of Interest (EOI) Form**
+**Effort**: Medium | **Impact**: Critical | **Time**: 3-4 days
+**Status**: 🔄 In Progress
+
+**Current State**: Upload-based EOI with file requirements
+**Target**: Fully digital online form with mobile signature capture
+
+**Implementation Steps**:
+1. **Complete Form Redesign**:
+   - Remove ALL file upload requirements from EOI stage
+   - Create comprehensive online form with all necessary fields
+   - Add school details, administrator info, emergency contacts
+   - Include competition-specific information fields
+   - Add terms and conditions acceptance
+
+2. **Digital Signature Integration**:
+   - Implement HTML5 Canvas signature capture
+   - Add SignaturePad.js for cross-device compatibility
+   - Ensure mobile-responsive signature field (finger/stylus friendly)
+   - Add signature validation and clear/redo functionality
+   - Store signature as base64 data in database
+
+3. **Mobile Optimization**:
+   - Fully responsive design for all screen sizes
+   - Touch-friendly form controls and large tap targets
+   - Progressive enhancement for different devices
+   - Offline form caching for poor connections
+   - Auto-save functionality every 30 seconds
+
+4. **Enhanced Security & UX**:
+   - Google reCAPTCHA v3 seamless integration
+   - Real-time form validation with instant feedback
+   - Single-submit process for entire form + signature
+   - Immediate confirmation with reference number
+   - Email confirmation sent automatically
+
+**Database Changes**:
+```sql
+ALTER TABLE osb_registrations ADD COLUMN
+digital_signature LONGTEXT NULL COMMENT 'Base64 encoded signature data',
+signature_timestamp TIMESTAMP NULL COMMENT 'When signature was captured',
+eoi_form_data JSON NULL COMMENT 'Complete EOI form responses',
+submission_device_info VARCHAR(500) NULL COMMENT 'Device/browser info for audit';
+
+-- Remove file upload dependencies from EOI stage
+UPDATE osb_registrations SET step_progress = JSON_SET(step_progress, '$.eoi_requires_upload', false);
+```
+
+**Files to Create/Modify**:
+- `templates/shortcodes/enhanced-eoi-form.php` (new comprehensive form)
+- `public/js/signature-capture.js` (signature functionality)
+- `public/css/eoi-form-mobile.css` (mobile-optimized styles)
+- `includes/class-eoi-processor.php` (form processing logic)
+
+---
+
+### ✅ **Task 6.2: Admin Group Draw & Notification System**
+**Effort**: High | **Impact**: Critical | **Time**: 5-6 days
+**Status**: 📋 Planned
+
+**Current State**: Manual event management without group functionality
+**Target**: Comprehensive draw date setting and multi-channel notifications
+
+**Implementation Steps**:
+1. **Draw Date Management**:
+   - Add draw_date field to events table
+   - Create admin interface for setting/updating draw dates
+   - Implement date validation (must be after registration deadline)
+   - Add draw date display in event management
+
+2. **Multi-Channel Notification System**:
+   - Email notifications (existing + enhanced)
+   - SMS integration via Twilio/similar service
+   - WhatsApp Business API integration
+   - Notification scheduling and queuing system
+   - Delivery status tracking and retry logic
+
+3. **Smart Notification Logic**:
+   - Auto-notify approved schools when draw date is set
+   - Bulk notification resend functionality
+   - Date change notifications to all registered schools
+   - Personalized notification templates
+   - Notification history and audit trail
+
+**Database Changes**:
+```sql
+ALTER TABLE osb_events ADD COLUMN
+draw_date DATETIME NULL COMMENT 'Date for group draws',
+notification_settings JSON NULL COMMENT 'Multi-channel notification preferences';
+
+CREATE TABLE osb_notification_queue (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    event_id INT NOT NULL,
+    school_id INT NOT NULL,
+    notification_type ENUM('email','sms','whatsapp') NOT NULL,
+    template_name VARCHAR(100) NOT NULL,
+    message_data JSON NULL,
+    scheduled_at DATETIME NOT NULL,
+    sent_at TIMESTAMP NULL,
+    status ENUM('pending','sent','failed','retry') DEFAULT 'pending',
+    delivery_info JSON NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (event_id) REFERENCES osb_events(id) ON DELETE CASCADE,
+    FOREIGN KEY (school_id) REFERENCES osb_schools(id) ON DELETE CASCADE
+);
+
+CREATE TABLE osb_notification_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    event_id INT NOT NULL,
+    notification_type VARCHAR(50) NOT NULL,
+    recipient_count INT NOT NULL,
+    sent_by INT NOT NULL,
+    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    message_template VARCHAR(100),
+    delivery_summary JSON NULL
+);
+```
+
+---
+
+### ✅ **Task 6.3: Competition Groups & Tournament Management**
+**Effort**: High | **Impact**: Critical | **Time**: 7-8 days
+**Status**: 📋 Planned
+
+**Current State**: No group management system
+**Target**: Complete tournament management with automated progression
+
+**Implementation Steps**:
+1. **Group Management Interface**:
+   - Create groups with configurable max schools per group
+   - Drag-and-drop school assignment to groups
+   - Visual group display with school lists
+   - Group editing and rebalancing capabilities
+
+2. **Scoring System**:
+   - Word-by-word scoring interface for each school
+   - Real-time score calculation and ranking
+   - Automatic winner determination per group
+   - Score validation and audit logging
+
+3. **Tournament Progression Logic**:
+   - Automated advancement of group winners
+   - Smart re-grouping for subsequent rounds
+   - Tournament bracket generation and display
+   - Final winner determination algorithm
+
+4. **Live Draw Support**:
+   - Random group assignment tools
+   - Live draw mode for transparency
+   - Group assignment broadcast interface
+   - Audit trail for all group assignments
+
+**Database Changes**:
+```sql
+CREATE TABLE osb_event_groups (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    event_id INT NOT NULL,
+    group_name VARCHAR(100) NOT NULL,
+    max_schools INT DEFAULT 8,
+    round_number INT DEFAULT 1,
+    group_order INT DEFAULT 1,
+    status ENUM('draft','active','completed') DEFAULT 'draft',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (event_id) REFERENCES osb_events(id) ON DELETE CASCADE
+);
+
+CREATE TABLE osb_group_schools (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    group_id INT NOT NULL,
+    school_id INT NOT NULL,
+    assigned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    assigned_by INT NOT NULL,
+    FOREIGN KEY (group_id) REFERENCES osb_event_groups(id) ON DELETE CASCADE,
+    FOREIGN KEY (school_id) REFERENCES osb_schools(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_school_per_group (group_id, school_id)
+);
+
+CREATE TABLE osb_group_scores (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    group_id INT NOT NULL,
+    school_id INT NOT NULL,
+    word VARCHAR(200) NOT NULL,
+    score INT NOT NULL,
+    scored_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    scored_by INT NOT NULL,
+    round_position INT DEFAULT 1,
+    FOREIGN KEY (group_id) REFERENCES osb_event_groups(id) ON DELETE CASCADE,
+    FOREIGN KEY (school_id) REFERENCES osb_schools(id) ON DELETE CASCADE
+);
+
+CREATE TABLE osb_tournament_rounds (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    event_id INT NOT NULL,
+    round_number INT NOT NULL,
+    round_name VARCHAR(100) NOT NULL,
+    start_date DATETIME NULL,
+    end_date DATETIME NULL,
+    status ENUM('planned','active','completed') DEFAULT 'planned',
+    advancement_criteria JSON NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (event_id) REFERENCES osb_events(id) ON DELETE CASCADE
+);
+```
+
+---
+
+### ✅ **Task 6.4: Enhanced School Dashboard Experience**
+**Effort**: Medium | **Impact**: High | **Time**: 4-5 days
+**Status**: 📋 Planned
+
+**Current State**: Basic dashboard with student form
+**Target**: Comprehensive competition experience dashboard
+
+**Implementation Steps**:
+1. **Group Assignment Display**:
+   - Show assigned group information
+   - Display other schools in same group
+   - Group assignment timeline and status
+
+2. **Tournament Bracket Visualization**:
+   - Interactive tournament bracket display
+   - Real-time progression updates
+   - Historical round information
+   - Performance analytics
+
+3. **Status-Based Form Management**:
+   - Lock student forms after group assignment
+   - Progressive disclosure based on competition stage
+   - Edit restrictions based on admin settings
+   - Form submission history
+
+4. **Real-Time Notifications**:
+   - In-dashboard notification center
+   - Round progression alerts
+   - Competition updates and announcements
+   - Personalized messaging
+
+---
+
+### ✅ **Task 6.5: Advanced Notification Templates & Personalization**
+**Effort**: Medium | **Impact**: High | **Time**: 3-4 days
+**Status**: 📋 Planned
+
+**Implementation Steps**:
+1. **Template System**:
+   - Round progression notification templates
+   - Winner announcement templates (personalized vs. general)
+   - Stage-specific messaging
+   - Multi-language support preparation
+
+2. **Personalization Engine**:
+   - Dynamic content based on school status
+   - Performance-based messaging
+   - Historical participation references
+   - Achievement recognition
+
+**Notification Templates to Create**:
+- School approved + draw date notification
+- Group assignment confirmation
+- Round qualification announcement
+- Quarter-final/Semi-final advancement
+- Final round invitation
+- Winner announcement (personalized)
+- Competition completion (general announcement)
+
+---
+
+## 🎯 **COMPETITION STAGES IMPLEMENTATION PRIORITY**
+
+### **Week 1-2: Foundation (December 9-20, 2024)**
+1. ✅ Enhanced EOI Form (Task 6.1) - **CURRENT FOCUS**
+2. 🔄 Git branch creation and initial commits
+3. 📱 Mobile signature testing and optimization
+
+### **Week 3-4: Core Features (December 23 - January 3, 2025)**
+1. 📋 Admin draw date management (Task 6.2)
+2. 🔔 Multi-channel notification system
+3. 👥 Basic group management interface
+
+### **Week 5-6: Tournament System (January 6-17, 2025)**
+1. 🏆 Competition groups and scoring (Task 6.3)
+2. 📊 Tournament bracket logic
+3. 🎯 Automated progression system
+
+### **Week 7: Polish & Integration (January 20-24, 2025)**
+1. 📱 Enhanced dashboard experience (Task 6.4)
+2. 📧 Advanced notification templates (Task 6.5)
+3. 🧪 Comprehensive testing and bug fixes
+
+---
+
+## 📊 **SUCCESS METRICS FOR COMPETITION STAGES**
+
+### **Phase 6 Success Criteria**
+- [ ] 100% digital EOI process (zero file uploads required)
+- [ ] 95% mobile signature capture success rate
+- [ ] 90% reduction in admin group management time
+- [ ] 100% automated tournament progression accuracy
+- [ ] 85% school satisfaction with new dashboard experience
+- [ ] Multi-channel notification delivery rate >98%
+
+---
+
+*Last Updated: December 9, 2024*
+*Version: 2.0 - Competition Stages Overhaul*
+*Current Phase: 6.1 - Enhanced EOI Form*
+*Next Review: After Phase 6 Completion*

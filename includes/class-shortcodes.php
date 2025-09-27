@@ -47,6 +47,7 @@ class OSB_Shortcodes {
         add_shortcode('osb_sponsors', array($this, 'sponsorsShortcode'));
         add_shortcode('osb_event_info', array($this, 'eventInfoShortcode'));
         add_shortcode('osb_registration_status', array($this, 'registrationStatusShortcode'));
+        add_shortcode('osb_spellingbee_dashboard', array($this, 'spellingbeeDashboardShortcode'));
         add_shortcode('osb_full_page', array($this, 'fullPageShortcode'));
     }
 
@@ -70,7 +71,7 @@ class OSB_Shortcodes {
         }
 
         if (!$event) {
-            return '<div class="osb-error">' . __('No active event found.', 'omafuru-spelling-bee') . '</div>';
+            return '<div class="osb-error">' . __('No active event found.', 'spelling-bee-pro') . '</div>';
         }
 
         // Get event video if exists
@@ -117,12 +118,12 @@ class OSB_Shortcodes {
         }
 
         if (!$event) {
-            return '<div class="osb-error">' . __('No active event found.', 'omafuru-spelling-bee') . '</div>';
+            return '<div class="osb-error">' . __('No active event found.', 'spelling-bee-pro') . '</div>';
         }
 
         // Check if registration is open
         if ($event->status !== 'upcoming') {
-            return '<div class="osb-notice">' . __('Registration is currently closed for this event.', 'omafuru-spelling-bee') . '</div>';
+            return '<div class="osb-notice">' . __('Registration is currently closed for this event.', 'spelling-bee-pro') . '</div>';
         }
 
         $step = intval($atts['step']);
@@ -152,7 +153,7 @@ class OSB_Shortcodes {
         }
 
         if (!$event) {
-            return '<div class="osb-error">' . __('No active event found.', 'omafuru-spelling-bee') . '</div>';
+            return '<div class="osb-error">' . __('No active event found.', 'spelling-bee-pro') . '</div>';
         }
 
         // Get participating schools
@@ -297,7 +298,7 @@ class OSB_Shortcodes {
         }
 
         if (!$event) {
-            return '<div class="osb-error">' . __('No active event found.', 'omafuru-spelling-bee') . '</div>';
+            return '<div class="osb-error">' . __('No active event found.', 'spelling-bee-pro') . '</div>';
         }
 
         // Get donation statistics
@@ -334,7 +335,7 @@ class OSB_Shortcodes {
         }
 
         if (!$event) {
-            return '<div class="osb-error">' . __('No active event found.', 'omafuru-spelling-bee') . '</div>';
+            return '<div class="osb-error">' . __('No active event found.', 'spelling-bee-pro') . '</div>';
         }
 
         // Parse suggested amounts
@@ -412,7 +413,7 @@ class OSB_Shortcodes {
         }
 
         if (!$event) {
-            return '<div class="osb-error">' . __('No active event found.', 'omafuru-spelling-bee') . '</div>';
+            return '<div class="osb-error">' . __('No active event found.', 'spelling-bee-pro') . '</div>';
         }
 
         ob_start();
@@ -431,21 +432,67 @@ class OSB_Shortcodes {
         $token = !empty($atts['token']) ? $atts['token'] : sanitize_text_field($_GET['token'] ?? '');
 
         if (empty($token)) {
-            return '<div class="osb-error">' . __('Registration token is required.', 'omafuru-spelling-bee') . '</div>';
+            return '<div class="osb-error">' . __('Registration token is required.', 'spelling-bee-pro') . '</div>';
         }
 
         $db = OSB_Database::getInstance();
         $registration = $db->getRegistrationByToken($token);
 
         if (!$registration) {
-            return '<div class="osb-error">' . __('Invalid registration token.', 'omafuru-spelling-bee') . '</div>';
+            return '<div class="osb-error">' . __('Invalid registration token.', 'spelling-bee-pro') . '</div>';
         }
 
         // Get students for this registration
         $students = $db->getStudentsBySchool($registration->school_id);
 
         ob_start();
-        include OSB_PLUGIN_PATH . 'templates/shortcodes/registration-status.php';
+        include OSB_PLUGIN_PATH . 'templates/shortcodes/spellingbee-dashboard.php';
+        return ob_get_clean();
+    }
+
+    /**
+     * SpellingBee Dashboard Shortcode
+     */
+    public function spellingbeeDashboardShortcode($atts) {
+        $atts = shortcode_atts(array(
+            'token' => ''
+        ), $atts, 'osb_spellingbee_dashboard');
+
+        $token = !empty($atts['token']) ? $atts['token'] : sanitize_text_field($_GET['token'] ?? '');
+
+        $registration = null;
+        $students = array();
+        $school = null;
+
+        // If token is provided, try to load registration or school
+        if (!empty($token)) {
+            $db = OSB_Database::getInstance();
+
+            // First try to get registration by token (for completed registrations)
+            $registration = $db->getRegistrationByToken($token);
+
+            if ($registration) {
+                // Get students for this registration
+                $students = $db->getStudentsBySchool($registration->school_id);
+                $school = $db->getSchool($registration->school_id);
+            } else {
+                // If no registration found, check if it's a temporary school token
+                $school = $db->getSchoolByTempToken($token);
+
+                if ($school) {
+                    // Check if this school has any existing registration (shouldn't, but safety check)
+                    $existing_registrations = $db->getRegistrationsBySchool($school->id);
+                    if (!empty($existing_registrations)) {
+                        $registration = $existing_registrations[0];
+                        $students = $db->getStudentsBySchool($school->id);
+                    }
+                }
+            }
+        }
+
+        // Always load the template (it will show login form if no valid registration)
+        ob_start();
+        include OSB_PLUGIN_PATH . 'templates/shortcodes/new-spellingbee-dashboard.php';
         return ob_get_clean();
     }
 
@@ -476,7 +523,7 @@ class OSB_Shortcodes {
             return ob_get_clean();
         }
 
-        return '<div class="osb-error">' . sprintf(__('Template %s not found.', 'omafuru-spelling-bee'), $template_name) . '</div>';
+        return '<div class="osb-error">' . sprintf(__('Template %s not found.', 'spelling-bee-pro'), $template_name) . '</div>';
     }
 
     /**
@@ -506,12 +553,12 @@ class OSB_Shortcodes {
      */
     public function getStatusBadge($status) {
         $badges = array(
-            'pending' => '<span class="osb-badge osb-badge-warning">' . __('Pending', 'omafuru-spelling-bee') . '</span>',
-            'approved' => '<span class="osb-badge osb-badge-success">' . __('Approved', 'omafuru-spelling-bee') . '</span>',
-            'rejected' => '<span class="osb-badge osb-badge-danger">' . __('Rejected', 'omafuru-spelling-bee') . '</span>',
-            'completed' => '<span class="osb-badge osb-badge-info">' . __('Completed', 'omafuru-spelling-bee') . '</span>',
-            'active' => '<span class="osb-badge osb-badge-success">' . __('Active', 'omafuru-spelling-bee') . '</span>',
-            'inactive' => '<span class="osb-badge osb-badge-secondary">' . __('Inactive', 'omafuru-spelling-bee') . '</span>'
+            'pending' => '<span class="osb-badge osb-badge-warning">' . __('Pending', 'spelling-bee-pro') . '</span>',
+            'approved' => '<span class="osb-badge osb-badge-success">' . __('Approved', 'spelling-bee-pro') . '</span>',
+            'rejected' => '<span class="osb-badge osb-badge-danger">' . __('Rejected', 'spelling-bee-pro') . '</span>',
+            'completed' => '<span class="osb-badge osb-badge-info">' . __('Completed', 'spelling-bee-pro') . '</span>',
+            'active' => '<span class="osb-badge osb-badge-success">' . __('Active', 'spelling-bee-pro') . '</span>',
+            'inactive' => '<span class="osb-badge osb-badge-secondary">' . __('Inactive', 'spelling-bee-pro') . '</span>'
         );
 
         return isset($badges[$status]) ? $badges[$status] : '<span class="osb-badge osb-badge-secondary">' . ucfirst($status) . '</span>';
@@ -672,7 +719,7 @@ class OSB_Shortcodes {
 
                                         <h4 style="margin-top: 2rem; margin-bottom: 1rem;"><?php _e('Liability:', 'spelling-bee-pro'); ?></h4>
                                         <ul>
-                                            <li><?php _e('Omafuru Foundation is not liable for travel expenses', 'spelling-bee-pro'); ?></li>
+                                            <li><?php _e('The organizing foundation is not liable for travel expenses', 'spelling-bee-pro'); ?></li>
                                             <li><?php _e('Schools are responsible for student supervision', 'spelling-bee-pro'); ?></li>
                                             <li><?php _e('Medical emergencies will be handled according to protocol', 'spelling-bee-pro'); ?></li>
                                             <li><?php _e('Insurance coverage is recommended for participants', 'spelling-bee-pro'); ?></li>
@@ -686,6 +733,44 @@ class OSB_Shortcodes {
 
                                 <div class="registration-form">
                                     <h3 style="margin-bottom: 1.5rem; font-size: 1.8rem;"><?php _e('🎓 School Registration', 'spelling-bee-pro'); ?></h3>
+
+                                    <!-- Already Registered CTA -->
+                                    <div class="osb-existing-school-cta">
+                                        <div class="osb-cta-content">
+                                            <div class="osb-cta-icon">🔑</div>
+                                            <div class="osb-cta-text">
+                                                <h4>Already Registered?</h4>
+                                                <p>Access your school dashboard to manage students, upload documents, and track your registration status.</p>
+                                            </div>
+                                            <button type="button" class="osb-cta-btn" id="osb-access-dashboard-btn">
+                                                Access Dashboard
+                                            </button>
+                                        </div>
+
+                                        <!-- Hidden login form -->
+                                        <div class="osb-quick-login" id="osb-quick-login" style="display: none;">
+                                            <h4>Quick Dashboard Access</h4>
+                                            <div class="osb-login-fields">
+                                                <div class="osb-login-field">
+                                                    <label for="quick-token">Registration Token</label>
+                                                    <input type="text" id="quick-token" placeholder="Enter your registration token">
+                                                </div>
+                                                <div class="osb-login-divider">OR</div>
+                                                <div class="osb-login-field">
+                                                    <label for="quick-email">School Email</label>
+                                                    <input type="email" id="quick-email" placeholder="Enter your school email">
+                                                </div>
+                                            </div>
+                                            <div class="osb-login-actions">
+                                                <button type="button" class="osb-login-submit-btn" id="osb-quick-login-btn">Access Dashboard</button>
+                                                <button type="button" class="osb-login-cancel-btn" id="osb-cancel-login-btn">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="osb-form-divider">
+                                        <span>New School Registration</span>
+                                    </div>
 
                                     <form id="school-registration-form">
                                         <div class="form-group">
@@ -708,14 +793,18 @@ class OSB_Shortcodes {
                                                 <label for="school-state"><?php _e('State *', 'spelling-bee-pro'); ?></label>
                                                 <select id="school-state" name="school-state" required>
                                                     <option value=""><?php _e('Select State', 'spelling-bee-pro'); ?></option>
-                                                    <option value="lagos"><?php _e('Lagos', 'spelling-bee-pro'); ?></option>
-                                                    <option value="abuja"><?php _e('Abuja (FCT)', 'spelling-bee-pro'); ?></option>
-                                                    <option value="kano"><?php _e('Kano', 'spelling-bee-pro'); ?></option>
-                                                    <option value="rivers"><?php _e('Rivers', 'spelling-bee-pro'); ?></option>
-                                                    <option value="oyo"><?php _e('Oyo', 'spelling-bee-pro'); ?></option>
-                                                    <option value="kaduna"><?php _e('Kaduna', 'spelling-bee-pro'); ?></option>
-                                                    <option value="other"><?php _e('Other', 'spelling-bee-pro'); ?></option>
+                                                    <option value="Lagos State"><?php _e('Lagos', 'spelling-bee-pro'); ?></option>
+                                                    <option value="Abuja (FCT)"><?php _e('Abuja (FCT)', 'spelling-bee-pro'); ?></option>
+                                                    <option value="Kano State"><?php _e('Kano', 'spelling-bee-pro'); ?></option>
+                                                    <option value="Rivers State"><?php _e('Rivers', 'spelling-bee-pro'); ?></option>
+                                                    <option value="Oyo State"><?php _e('Oyo', 'spelling-bee-pro'); ?></option>
+                                                    <option value="Kaduna State"><?php _e('Kaduna', 'spelling-bee-pro'); ?></option>
+                                                    <option value="Other"><?php _e('Other', 'spelling-bee-pro'); ?></option>
                                                 </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="school-city"><?php _e('City *', 'spelling-bee-pro'); ?></label>
+                                                <input type="text" id="school-city" name="school-city" placeholder="<?php _e('Enter city name', 'spelling-bee-pro'); ?>" required>
                                             </div>
                                         </div>
 
@@ -740,26 +829,15 @@ class OSB_Shortcodes {
                                             <input type="email" id="contact-email" name="contact-email" placeholder="school@example.com" required>
                                         </div>
 
-                                        <div class="form-row">
-                                            <div class="form-group">
-                                                <label for="student-count"><?php _e('Number of Students *', 'spelling-bee-pro'); ?></label>
-                                                <select id="student-count" name="student-count" required>
-                                                    <option value=""><?php _e('Select Count', 'spelling-bee-pro'); ?></option>
-                                                    <option value="3"><?php _e('3 Students', 'spelling-bee-pro'); ?></option>
-                                                    <option value="4"><?php _e('4 Students', 'spelling-bee-pro'); ?></option>
-                                                    <option value="5"><?php _e('5 Students', 'spelling-bee-pro'); ?></option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="previous-participation"><?php _e('Previous Participation', 'spelling-bee-pro'); ?></label>
-                                                <select id="previous-participation" name="previous-participation">
-                                                    <option value="no"><?php _e('First Time', 'spelling-bee-pro'); ?></option>
-                                                    <option value="2023"><?php _e('Participated in 2023', 'spelling-bee-pro'); ?></option>
-                                                    <option value="2022"><?php _e('Participated in 2022', 'spelling-bee-pro'); ?></option>
-                                                    <option value="multiple"><?php _e('Multiple Years', 'spelling-bee-pro'); ?></option>
-                                                </select>
+                                        <!-- Google reCAPTCHA -->
+                                        <?php if (get_option('osb_recaptcha_enabled', '1') === '1' && !empty(get_option('osb_recaptcha_site_key', ''))): ?>
+                                        <div class="form-group">
+                                            <div class="g-recaptcha" data-sitekey="<?php echo esc_attr(get_option('osb_recaptcha_site_key', '')); ?>"></div>
+                                            <div id="recaptcha-error" class="form-error" style="display: none; color: #ff6b6b; margin-top: 10px; font-size: 0.9rem;">
+                                                <?php _e('Please complete the reCAPTCHA verification.', 'spelling-bee-pro'); ?>
                                             </div>
                                         </div>
+                                        <?php endif; ?>
 
                                         <div class="form-group">
                                             <label for="additional-info"><?php _e('Additional Information', 'spelling-bee-pro'); ?></label>
@@ -1684,7 +1762,227 @@ class OSB_Shortcodes {
                 border-top: 2px solid #333 !important;
             }
         }
+
+        /* Already Registered CTA Styles */
+        .osb-existing-school-cta {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border: 2px solid #90caf9;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .osb-cta-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .osb-cta-icon {
+            font-size: 3rem;
+            background: #1976d2;
+            color: white;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .osb-cta-text {
+            flex: 1;
+        }
+
+        .osb-cta-text h4 {
+            margin: 0 0 8px 0;
+            color: #1565c0;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .osb-cta-text p {
+            margin: 0;
+            color: #1976d2;
+            line-height: 1.5;
+        }
+
+        .osb-cta-btn {
+            background: linear-gradient(135deg, #1976d2, #1565c0);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .osb-cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(25,118,210,0.4);
+        }
+
+        .osb-quick-login {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #e3f2fd;
+        }
+
+        .osb-quick-login h4 {
+            margin: 0 0 15px 0;
+            color: #1565c0;
+            text-align: center;
+        }
+
+        .osb-login-fields {
+            margin-bottom: 20px;
+        }
+
+        .osb-login-field {
+            margin-bottom: 15px;
+        }
+
+        .osb-login-field label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #1976d2;
+        }
+
+        .osb-login-field input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e3f2fd;
+            border-radius: 6px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        .osb-login-field input:focus {
+            outline: none;
+            border-color: #1976d2;
+            box-shadow: 0 0 0 3px rgba(25,118,210,0.1);
+        }
+
+        .osb-login-divider {
+            text-align: center;
+            margin: 15px 0;
+            font-weight: 600;
+            color: #666;
+            position: relative;
+        }
+
+        .osb-login-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e3f2fd;
+            z-index: 1;
+        }
+
+        .osb-login-divider {
+            background: white;
+            padding: 0 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .osb-login-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .osb-login-submit-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .osb-login-submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40,167,69,0.4);
+        }
+
+        .osb-login-cancel-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .osb-login-cancel-btn:hover {
+            background: #5a6268;
+        }
+
+        .osb-form-divider {
+            text-align: center;
+            margin: 30px 0 20px 0;
+            position: relative;
+        }
+
+        .osb-form-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(255,255,255,0.3);
+            z-index: 1;
+        }
+
+        .osb-form-divider span {
+            background: #0052cc;
+            padding: 0 20px;
+            color: white;
+            font-weight: 600;
+            position: relative;
+            z-index: 2;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .osb-cta-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .osb-cta-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 2.5rem;
+            }
+
+            .osb-login-actions {
+                flex-direction: column;
+            }
+        }
+
         </style>
+
+        <!-- Google reCAPTCHA Script -->
+        <?php if (get_option('osb_recaptcha_enabled', '1') === '1' && !empty(get_option('osb_recaptcha_site_key', ''))): ?>
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        <?php endif; ?>
 
         <script>
         jQuery(document).ready(function($) {
@@ -1734,24 +2032,172 @@ class OSB_Shortcodes {
                 $('body').removeClass('osb-loading');
             });
 
-            // Form submission handling
+            // Already Registered CTA functionality
+            $('#osb-access-dashboard-btn').on('click', function() {
+                $('#osb-quick-login').slideToggle(300);
+                $(this).text($(this).text() === 'Access Dashboard' ? 'Hide Login' : 'Access Dashboard');
+            });
+
+            $('#osb-cancel-login-btn').on('click', function() {
+                $('#osb-quick-login').slideUp(300);
+                $('#osb-access-dashboard-btn').text('Access Dashboard');
+                $('#quick-token').val('');
+                $('#quick-email').val('');
+            });
+
+            $('#osb-quick-login-btn').on('click', function() {
+                const token = $('#quick-token').val().trim();
+                const email = $('#quick-email').val().trim();
+                const submitBtn = $(this);
+
+                if (!token && !email) {
+                    alert('Please enter either your registration token or email address.');
+                    return;
+                }
+
+                const originalText = submitBtn.text();
+                submitBtn.text('Processing...').prop('disabled', true);
+
+                if (token) {
+                    // Redirect with token
+                    window.location.href = '/spellingbee-dashboard/?token=' + encodeURIComponent(token);
+                } else if (email) {
+                    // Send dashboard link via email
+                    $.ajax({
+                        url: '<?php echo admin_url('admin-ajax.php'); ?>',
+                        type: 'POST',
+                        data: {
+                            action: 'osb_send_dashboard_link',
+                            email: email,
+                            nonce: '<?php echo wp_create_nonce('osb_dashboard_login'); ?>'
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                alert('Dashboard link sent to your email! Please check your inbox.');
+                                $('#quick-email').val('');
+                                $('#osb-quick-login').slideUp(300);
+                                $('#osb-access-dashboard-btn').text('Access Dashboard');
+                            } else {
+                                alert('Error: ' + response.data);
+                            }
+                            submitBtn.text(originalText).prop('disabled', false);
+                        },
+                        error: function() {
+                            alert('Network error. Please try again.');
+                            submitBtn.text(originalText).prop('disabled', false);
+                        }
+                    });
+                }
+            });
+
+            // Clear other field when typing in one
+            $('#quick-token').on('input', function() {
+                if ($(this).val().trim()) {
+                    $('#quick-email').val('');
+                }
+            });
+
+            $('#quick-email').on('input', function() {
+                if ($(this).val().trim()) {
+                    $('#quick-token').val('');
+                }
+            });
+
+            // Form submission handling - FIXED TO ACTUALLY SUBMIT
             $('#school-registration-form').on('submit', function(e) {
                 e.preventDefault();
+                console.log('=== FULL PAGE FORM SUBMISSION ===');
 
-                // Get form data
-                const formData = new FormData(this);
+                // Validate reCAPTCHA if enabled
+                <?php if (get_option('osb_recaptcha_enabled', '1') === '1' && !empty(get_option('osb_recaptcha_site_key', ''))): ?>
+                if (typeof grecaptcha !== 'undefined') {
+                    const recaptchaResponse = grecaptcha.getResponse();
+                    if (!recaptchaResponse) {
+                        $('#recaptcha-error').show();
+                        $('html, body').animate({
+                            scrollTop: $('#recaptcha-error').offset().top - 100
+                        }, 500);
+                        return;
+                    }
+                    $('#recaptcha-error').hide();
+                }
+                <?php endif; ?>
+
+                // Get form data and convert to our backend format
+                const formData = {
+                    action: 'osb_submit_registration',
+                    step: 1,
+                    osb_registration_nonce: '<?php echo wp_create_nonce('osb_registration'); ?>',
+                    school_name: $('#school-name').val(),
+                    school_type: $('#school-type').val(),
+                    contact_person: $('#contact-name').val(),
+                    contact_email: $('#contact-email').val(),
+                    contact_phone: $('#contact-phone').val(),
+                    address: $('#school-address').val(),
+                    city: $('#school-city').val(),
+                    state: $('#school-state').val(),
+                    postal_code: '', // Not in form
+                    country: 'Nigeria' // Default
+                };
+
+                // Add reCAPTCHA response if available
+                <?php if (get_option('osb_recaptcha_enabled', '1') === '1' && !empty(get_option('osb_recaptcha_site_key', ''))): ?>
+                if (typeof grecaptcha !== 'undefined') {
+                    formData['g-recaptcha-response'] = grecaptcha.getResponse();
+                }
+                <?php endif; ?>
+
+                console.log('Form data:', formData);
 
                 // Show loading state
                 const submitBtn = $(this).find('.submit-btn');
                 const originalText = submitBtn.text();
                 submitBtn.text('Submitting...').prop('disabled', true);
 
-                // Here you would normally send the data to your backend
-                // For now, we'll just show a success message
-                setTimeout(function() {
-                    alert('Registration submitted successfully! You will receive a confirmation email shortly.');
-                    submitBtn.text(originalText).prop('disabled', false);
-                }, 2000);
+                // ACTUALLY SUBMIT TO BACKEND
+                $.ajax({
+                    url: '<?php echo admin_url('admin-ajax.php'); ?>',
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        console.log('=== AJAX SUCCESS ===');
+                        console.log('Response:', response);
+
+                        if (response.success) {
+                            // Check if we should redirect to dashboard
+                            if (response.data.redirect && response.data.dashboard_url) {
+                                alert('Registration successful! Redirecting to your dashboard...');
+                                setTimeout(function() {
+                                    window.location.href = response.data.dashboard_url;
+                                }, 2000);
+                            } else {
+                                alert('Registration submitted successfully! School created with ID: ' + (response.data.school_id || 'unknown'));
+                            }
+                            // Reset form
+                            $('#school-registration-form')[0].reset();
+                        } else {
+                            // Check if this is an existing user error
+                            if (response.data && response.data.type === 'existing_user') {
+                                if (confirm(response.data.message + '\n\n' + response.data.action_message)) {
+                                    window.location.href = response.data.dashboard_url;
+                                }
+                            } else {
+                                alert('Registration failed: ' + response.data);
+                            }
+                        }
+
+                        submitBtn.text(originalText).prop('disabled', false);
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('=== AJAX ERROR ===');
+                        console.log('Status:', status);
+                        console.log('Error:', error);
+                        console.log('XHR:', xhr);
+
+                        alert('Registration failed - Network error: ' + status);
+                        submitBtn.text(originalText).prop('disabled', false);
+                    }
+                });
             });
         });
         </script>

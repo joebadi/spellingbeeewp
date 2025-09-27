@@ -11,14 +11,31 @@
 
 /* Header Section */
 .osb-results-header {
-    background: linear-gradient(135deg, #0052cc 0%, #003d99 50%, #004080 100%);
-    color: white;
+    background: linear-gradient(135deg, #0052cc 0%, #003d99 50%, #004080 100%) !important;
+    color: white !important;
     padding: 3rem 2rem;
     border-radius: 20px;
     margin-bottom: 2rem;
     position: relative;
     overflow: hidden;
     box-shadow: 0 10px 40px rgba(0, 82, 204, 0.3);
+}
+
+/* Ensure ALL text elements in header are white */
+.osb-results-header,
+.osb-results-header *,
+.osb-results-header h1,
+.osb-results-header h2,
+.osb-results-header h3,
+.osb-results-header h4,
+.osb-results-header h5,
+.osb-results-header h6,
+.osb-results-header p,
+.osb-results-header span,
+.osb-results-header div,
+.osb-results-header label,
+.osb-results-header a {
+    color: white !important;
 }
 
 .osb-results-header::before {
@@ -219,31 +236,63 @@
 
 .osb-competition-stats {
     display: flex;
-    gap: 2rem;
+    gap: 1.5rem;
+    background: linear-gradient(135deg, #0052cc 0%, #003d99 50%, #004080 100%);
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 82, 204, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.osb-competition-stats::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><defs><radialGradient id="grad1" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:rgba(255,255,255,0.1);stop-opacity:1" /><stop offset="100%" style="stop-color:rgba(255,255,255,0);stop-opacity:0" /></radialGradient></defs><circle cx="30" cy="40" r="10" fill="url(%23grad1)"/><circle cx="170" cy="60" r="15" fill="rgba(255,255,255,0.05)"/><circle cx="80" cy="180" r="8" fill="rgba(255,255,255,0.08)"/></svg>');
+    pointer-events: none;
+    opacity: 0.7;
 }
 
 .osb-stat-item {
     text-align: center;
-    padding: 1rem;
-    background: #f8f9fa;
-    border-radius: 15px;
-    min-width: 100px;
+    padding: 1.5rem 1rem;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    min-width: 120px;
+    flex: 1;
+    position: relative;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.osb-stat-item:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
 .osb-stat-number {
     display: block;
-    font-size: 2rem;
-    font-weight: 800;
-    color: #0052cc;
+    font-size: 3rem;
+    font-weight: 900;
+    color: white;
     line-height: 1;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    margin-bottom: 0.5rem;
 }
 
 .osb-stat-label {
-    font-size: 0.85rem;
-    color: #666;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-top: 0.5rem;
+    letter-spacing: 1px;
+    font-weight: 600;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
 }
 
 /* Section Title */
@@ -532,6 +581,8 @@
 
     .osb-competition-stats {
         justify-content: center;
+        padding: 1.5rem;
+        gap: 1rem;
     }
 }
 
@@ -603,6 +654,16 @@
     .osb-competition-stats {
         flex-direction: column;
         gap: 1rem;
+        padding: 1.5rem 1rem;
+    }
+
+    .osb-stat-item {
+        min-width: auto;
+        padding: 1.2rem 1rem;
+    }
+
+    .osb-stat-number {
+        font-size: 2.5rem;
     }
 
     .osb-results-header {
@@ -673,16 +734,17 @@
     }
 
     .osb-stat-item {
-        padding: 0.75rem;
-        min-width: 80px;
+        padding: 1rem 0.75rem;
+        min-width: auto;
     }
 
     .osb-stat-number {
-        font-size: 1.5rem;
+        font-size: 2rem;
     }
 
     .osb-stat-label {
-        font-size: 0.75rem;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
     }
 }
 
@@ -730,16 +792,17 @@
     }
 
     .osb-stat-item {
-        padding: 0.5rem;
-        min-width: 70px;
+        padding: 0.8rem 0.5rem;
+        min-width: auto;
     }
 
     .osb-stat-number {
-        font-size: 1.3rem;
+        font-size: 1.8rem;
     }
 
     .osb-stat-label {
-        font-size: 0.7rem;
+        font-size: 0.75rem;
+        letter-spacing: 0.3px;
     }
 }
 

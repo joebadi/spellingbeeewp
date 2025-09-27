@@ -1,5 +1,5 @@
 /**
- * Omafuru Spelling Bee - Public JavaScript
+ * Spelling Bee Pro - Public JavaScript
  *
  * Frontend functionality for registration forms, document uploads, and user interactions
  */

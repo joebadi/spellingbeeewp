@@ -137,11 +137,52 @@ class OSB_Database {
      * Create a new school
      */
     public function createSchool($data) {
+        // Log the data being inserted for debugging
+        error_log('OSB Database: createSchool called with data: ' . print_r($data, true));
+        error_log('OSB Database: Data count: ' . count($data));
+
+        // Add missing fields with defaults if needed
+        $defaults = array(
+            'status' => 'pending',
+            'created_at' => current_time('mysql'),
+            'updated_at' => current_time('mysql'),
+            'logo_url' => null,
+            'previous_participation' => null
+        );
+
+        $data = wp_parse_args($data, $defaults);
+
+        // Ensure we have the correct field mapping for the schools table
+        $school_data = array(
+            'wp_user_id' => intval($data['wp_user_id']),
+            'school_name' => sanitize_text_field($data['school_name']),
+            'school_type' => sanitize_text_field($data['school_type']),
+            'state' => sanitize_text_field($data['state']),
+            'address' => sanitize_textarea_field($data['address']),
+            'phone' => sanitize_text_field($data['contact_phone'] ?? $data['phone'] ?? ''),
+            'contact_person' => sanitize_text_field($data['contact_person']),
+            'contact_email' => sanitize_email($data['contact_email']),
+            'logo_url' => $data['logo_url'],
+            'previous_participation' => $data['previous_participation'],
+            'status' => sanitize_text_field($data['status']),
+            'created_at' => $data['created_at'],
+            'updated_at' => $data['updated_at']
+        );
+
+        error_log('OSB Database: Final school data: ' . print_r($school_data, true));
+
         $result = $this->wpdb->insert(
             $this->getTableName('schools'),
-            $data,
-            array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
+            $school_data,
+            array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
         );
+
+        if (!$result) {
+            error_log('OSB Database: Insert failed. MySQL Error: ' . $this->wpdb->last_error);
+            error_log('OSB Database: Query: ' . $this->wpdb->last_query);
+        } else {
+            error_log('OSB Database: School created successfully with ID: ' . $this->wpdb->insert_id);
+        }
 
         return $result ? $this->wpdb->insert_id : false;
     }
@@ -189,6 +230,21 @@ class OSB_Database {
     }
 
     /**
+     * Get school by temporary token
+     */
+    public function getSchoolByTempToken($temp_token) {
+        return $this->wpdb->get_row(
+            $this->wpdb->prepare(
+                "SELECT s.*, u.display_name as contact_person_name
+                 FROM {$this->getTableName('schools')} s
+                 LEFT JOIN {$this->wpdb->users} u ON s.wp_user_id = u.ID
+                 WHERE s.temp_token = %s",
+                $temp_token
+            )
+        );
+    }
+
+    /**
      * Get all schools
      */
     public function getAllSchools($status = null) {
@@ -203,6 +259,13 @@ class OSB_Database {
         $sql .= " ORDER BY s.school_name ASC";
 
         return $this->wpdb->get_results($sql);
+    }
+
+    /**
+     * Get all schools (alias for getAllSchools)
+     */
+    public function getSchools($status = null) {
+        return $this->getAllSchools($status);
     }
 
     /**
@@ -240,7 +303,7 @@ class OSB_Database {
     public function getStudent($student_id) {
         return $this->wpdb->get_row(
             $this->wpdb->prepare(
-                "SELECT st.*, s.school_name, u.user_email as student_email, pu.user_email as parent_email
+                "SELECT st.*, s.school_name, u.user_email as student_email, pu.user_email as parent_wp_email
                  FROM {$this->getTableName('students')} st
                  LEFT JOIN {$this->getTableName('schools')} s ON st.school_id = s.id
                  LEFT JOIN {$this->wpdb->users} u ON st.wp_user_id = u.ID
@@ -294,6 +357,61 @@ class OSB_Database {
             null,
             array('%d')
         );
+    }
+
+    /**
+     * Delete student and related data
+     */
+    public function deleteStudent($student_id) {
+        // Start transaction
+        $this->wpdb->query('START TRANSACTION');
+
+        try {
+            // First, delete related documents
+            $documents_deleted = $this->wpdb->delete(
+                $this->getTableName('documents'),
+                array('student_id' => $student_id),
+                array('%d')
+            );
+
+            // Delete the student record
+            $student_deleted = $this->wpdb->delete(
+                $this->getTableName('students'),
+                array('id' => $student_id),
+                array('%d')
+            );
+
+            if ($student_deleted === false) {
+                throw new Exception('Failed to delete student record');
+            }
+
+            // Commit transaction
+            $this->wpdb->query('COMMIT');
+
+            return $student_deleted;
+
+        } catch (Exception $e) {
+            // Rollback transaction
+            $this->wpdb->query('ROLLBACK');
+            error_log("[OSB] Error deleting student: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Add document record
+     */
+    public function addDocument($data) {
+        $result = $this->wpdb->insert(
+            $this->getTableName('documents'),
+            $data
+        );
+
+        if ($result === false) {
+            return false;
+        }
+
+        return $this->wpdb->insert_id;
     }
 
     /* ===========================================
@@ -398,6 +516,29 @@ class OSB_Database {
             array('id' => $registration_id),
             null,
             array('%d')
+        );
+    }
+
+    /**
+     * Get registrations by school
+     */
+    public function getRegistrationsBySchool($school_id, $status = null) {
+        $sql = "SELECT r.*, e.title as event_title, e.event_date
+                FROM {$this->getTableName('registrations')} r
+                LEFT JOIN {$this->getTableName('events')} e ON r.event_id = e.id
+                WHERE r.school_id = %d";
+
+        $params = array($school_id);
+
+        if ($status) {
+            $sql .= " AND r.status = %s";
+            $params[] = $status;
+        }
+
+        $sql .= " ORDER BY r.created_at DESC";
+
+        return $this->wpdb->get_results(
+            $this->wpdb->prepare($sql, $params)
         );
     }
 

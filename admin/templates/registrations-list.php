@@ -284,6 +284,12 @@ $admin_menu = OSB_Admin_Menu::getInstance();
 
                             <td class="column-actions" data-colname="<?php _e('Actions', 'spelling-bee-pro'); ?>">
                                 <div class="osb-action-buttons">
+                                    <button type="button" class="button button-small button-primary osb-view-form-data"
+                                            data-registration-id="<?php echo $registration->id; ?>"
+                                            title="<?php _e('View submitted form data', 'spelling-bee-pro'); ?>">
+                                        <?php _e('View Form Data', 'spelling-bee-pro'); ?>
+                                    </button>
+
                                     <button type="button" class="button button-small osb-send-email"
                                             data-registration-id="<?php echo $registration->id; ?>">
                                         <?php _e('Send Email', 'spelling-bee-pro'); ?>
@@ -395,6 +401,28 @@ $admin_menu = OSB_Admin_Menu::getInstance();
             </button>
             <button type="button" class="button osb-modal-close">
                 <?php _e('Cancel', 'spelling-bee-pro'); ?>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- View Form Data Modal -->
+<div id="osb-form-data-modal" class="osb-modal" style="display: none;">
+    <div class="osb-modal-content osb-modal-large">
+        <div class="osb-modal-header">
+            <h3 id="osb-form-data-modal-title"><?php _e('Registration Form Data', 'spelling-bee-pro'); ?></h3>
+            <button type="button" class="osb-modal-close">&times;</button>
+        </div>
+        <div class="osb-modal-body" id="osb-form-data-content">
+            <!-- Form data will be loaded here via AJAX -->
+            <div class="osb-loading">
+                <div class="osb-spinner"></div>
+                <p><?php _e('Loading registration data...', 'spelling-bee-pro'); ?></p>
+            </div>
+        </div>
+        <div class="osb-modal-footer">
+            <button type="button" class="button osb-modal-close">
+                <?php _e('Close', 'spelling-bee-pro'); ?>
             </button>
         </div>
     </div>
@@ -617,6 +645,11 @@ $admin_menu = OSB_Admin_Menu::getInstance();
     overflow-y: auto;
 }
 
+.osb-modal-large {
+    max-width: 900px;
+    width: 95%;
+}
+
 .osb-modal-header {
     display: flex;
     justify-content: space-between;
@@ -692,6 +725,375 @@ $admin_menu = OSB_Admin_Menu::getInstance();
     .osb-modal-content {
         width: 95%;
         margin: 20px;
+    }
+}
+
+/* Form Data Modal Styles */
+.osb-loading {
+    text-align: center;
+    padding: 40px;
+}
+
+.osb-spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #0073aa;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.osb-form-data-container {
+    padding: 0;
+}
+
+/* Tab Navigation Styles */
+.osb-tab-navigation {
+    display: flex;
+    background: #f1f1f1;
+    border-bottom: 2px solid #0073aa;
+    margin: -20px -20px 0 -20px;
+    padding: 0;
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+}
+
+.osb-tab-button {
+    flex: 1;
+    background: #f1f1f1;
+    border: none;
+    padding: 15px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666;
+    border-right: 1px solid #ddd;
+}
+
+.osb-tab-button:last-child {
+    border-right: none;
+}
+
+.osb-tab-button:hover {
+    background: #e8e8e8;
+    color: #0073aa;
+}
+
+.osb-tab-button.active {
+    background: #0073aa;
+    color: white;
+    box-shadow: inset 0 -3px 0 #005a87;
+}
+
+.osb-tab-button.active:hover {
+    background: #005a87;
+    color: white;
+}
+
+.osb-tab-icon {
+    font-size: 16px;
+}
+
+.osb-tab-label {
+    font-weight: 600;
+}
+
+/* Tab Content Styles */
+.osb-tab-content {
+    padding: 20px;
+    min-height: 400px;
+}
+
+.osb-tab-pane {
+    display: none;
+}
+
+.osb-tab-pane.active {
+    display: block;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.osb-form-section {
+    margin-bottom: 25px;
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.osb-form-section-header {
+    background: linear-gradient(135deg, #f7f7f7 0%, #f1f1f1 100%);
+    padding: 15px 20px;
+    border-bottom: 1px solid #e1e1e1;
+    font-weight: 600;
+    color: #0073aa;
+    font-size: 15px;
+}
+
+.osb-form-section-content {
+    padding: 20px;
+    background: #fff;
+}
+
+.osb-data-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.osb-data-item {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.osb-data-item.osb-data-full-width {
+    grid-column: 1 / -1;
+}
+
+.osb-data-label {
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 8px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.osb-data-value {
+    color: #333;
+    padding: 12px 15px;
+    background: #f9f9f9;
+    border-radius: 6px;
+    min-height: 20px;
+    line-height: 1.5;
+    border: 1px solid #e8e8e8;
+    transition: all 0.2s ease;
+}
+
+.osb-data-value:hover {
+    background: #f5f5f5;
+    border-color: #ddd;
+}
+
+.osb-data-value.empty {
+    color: #999;
+    font-style: italic;
+}
+
+.osb-data-value code {
+    background: #e8e8e8;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+}
+
+.osb-data-value a {
+    color: #0073aa;
+    text-decoration: none;
+}
+
+.osb-data-value a:hover {
+    text-decoration: underline;
+}
+
+/* Students Styles */
+.osb-students-list {
+    margin-top: 0;
+}
+
+.osb-student-card {
+    background: #fff;
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: all 0.2s ease;
+}
+
+.osb-student-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-color: #0073aa;
+}
+
+.osb-student-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+    color: #0073aa;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f1f1f1;
+}
+
+.osb-student-number {
+    background: #0073aa;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    min-width: 30px;
+    text-align: center;
+}
+
+.osb-student-name {
+    font-size: 16px;
+}
+
+/* Documents Styles */
+.osb-documents-list {
+    margin-top: 0;
+}
+
+.osb-document-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: #f9f9f9;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    transition: all 0.2s ease;
+}
+
+.osb-document-item:hover {
+    background: #f5f5f5;
+    border-color: #0073aa;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.osb-document-info {
+    flex: 1;
+}
+
+.osb-document-name {
+    font-weight: 600;
+    color: #0073aa;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.osb-document-icon {
+    font-size: 18px;
+}
+
+.osb-document-meta {
+    font-size: 12px;
+    color: #666;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.osb-document-meta span {
+    background: #e8e8e8;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.osb-document-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.osb-document-actions .button {
+    font-size: 12px;
+    padding: 6px 12px;
+    height: auto;
+    line-height: 1.4;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Status Badges */
+.osb-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.osb-status-pending {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.osb-status-approved {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.osb-status-rejected {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .osb-tab-navigation {
+        flex-direction: column;
+    }
+
+    .osb-tab-button {
+        border-right: none;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .osb-tab-button:last-child {
+        border-bottom: none;
+    }
+
+    .osb-data-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .osb-document-item {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+    }
+
+    .osb-document-actions {
+        justify-content: center;
+    }
+
+    .osb-student-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
     }
 }
 </style>
@@ -870,6 +1272,68 @@ jQuery(document).ready(function($) {
         $('#osb-email-modal-title').text('<?php _e('Send Bulk Email', 'spelling-bee-pro'); ?>');
         $('#osb-email-modal').show();
     });
+
+    // View Form Data
+    $('.osb-view-form-data').on('click', function() {
+        const registrationId = $(this).data('registration-id');
+
+        // Show modal with loading state
+        $('#osb-form-data-modal').show();
+        $('#osb-form-data-content').html(`
+            <div class="osb-loading">
+                <div class="osb-spinner"></div>
+                <p><?php _e('Loading registration data...', 'spelling-bee-pro'); ?></p>
+            </div>
+        `);
+
+        // Load form data via AJAX
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'osb_admin_action',
+                sub_action: 'get_registration_form_data',
+                registration_id: registrationId,
+                nonce: osb_ajax.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    $('#osb-form-data-content').html(response.data.html);
+                    // Initialize tabs after content is loaded
+                    initFormDataTabs();
+                } else {
+                    $('#osb-form-data-content').html(`
+                        <div class="osb-error">
+                            <p><strong><?php _e('Error:', 'spelling-bee-pro'); ?></strong> ${response.data}</p>
+                        </div>
+                    `);
+                }
+            },
+            error: function() {
+                $('#osb-form-data-content').html(`
+                    <div class="osb-error">
+                        <p><strong><?php _e('Network error:', 'spelling-bee-pro'); ?></strong> <?php _e('Unable to load registration data.', 'spelling-bee-pro'); ?></p>
+                    </div>
+                `);
+            }
+        });
+    });
+
+    // Initialize tab functionality for form data modal
+    function initFormDataTabs() {
+        // Tab switching functionality
+        $(document).off('click', '.osb-tab-button').on('click', '.osb-tab-button', function() {
+            const targetTab = $(this).data('tab');
+
+            // Remove active class from all buttons and panes
+            $('.osb-tab-button').removeClass('active');
+            $('.osb-tab-pane').removeClass('active');
+
+            // Add active class to clicked button and corresponding pane
+            $(this).addClass('active');
+            $('#osb-tab-' + targetTab).addClass('active');
+        });
+    }
 
     // Send email action
     $('#send-email-btn').on('click', function() {

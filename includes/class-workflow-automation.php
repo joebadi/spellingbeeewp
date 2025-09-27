@@ -109,7 +109,7 @@ class OSB_Workflow_Automation {
         $this->createAdminNotification(
             'new_registration',
             sprintf(
-                __('New registration from %s (%s)', 'omafuru-spelling-bee'),
+                __('New registration from %s (%s)', 'spelling-bee-pro'),
                 $school->school_name,
                 $classification
             ),
@@ -148,7 +148,7 @@ class OSB_Workflow_Automation {
             $this->createAdminNotification(
                 'status_changed',
                 sprintf(
-                    __('Registration #%d status changed to: %s', 'omafuru-spelling-bee'),
+                    __('Registration #%d status changed to: %s', 'spelling-bee-pro'),
                     $registration_id,
                     ucfirst($new_status)
                 ),
@@ -193,7 +193,7 @@ class OSB_Workflow_Automation {
         $this->createAdminNotification(
             'document_uploaded',
             sprintf(
-                __('New document uploaded for registration #%d', 'omafuru-spelling-bee'),
+                __('New document uploaded for registration #%d', 'spelling-bee-pro'),
                 $registration_id
             ),
             array(
@@ -231,22 +231,22 @@ class OSB_Workflow_Automation {
         switch ($type) {
             case 'new_registration':
                 return sprintf(
-                    __('A new registration has been submitted. School classification: %s. Please review and take appropriate action.', 'omafuru-spelling-bee'),
+                    __('A new registration has been submitted. School classification: %s. Please review and take appropriate action.', 'spelling-bee-pro'),
                     $data['classification']
                 );
 
             case 'document_uploaded':
-                return __('Review the uploaded documents and update registration status accordingly.', 'omafuru-spelling-bee');
+                return __('Review the uploaded documents and update registration status accordingly.', 'spelling-bee-pro');
 
             case 'status_changed':
                 return sprintf(
-                    __('Registration status changed from %s to %s. Review if further action is needed.', 'omafuru-spelling-bee'),
+                    __('Registration status changed from %s to %s. Review if further action is needed.', 'spelling-bee-pro'),
                     $data['old_status'],
                     $data['new_status']
                 );
 
             default:
-                return __('Please review this item in the admin dashboard.', 'omafuru-spelling-bee');
+                return __('Please review this item in the admin dashboard.', 'spelling-bee-pro');
         }
     }
 
@@ -343,7 +343,7 @@ class OSB_Workflow_Automation {
      */
     public function handleBulkOperation() {
         if (!current_user_can('osb_manage_registrations')) {
-            wp_send_json_error(__('Permission denied.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Permission denied.', 'spelling-bee-pro'));
         }
 
         $action = sanitize_text_field($_POST['bulk_action']);
@@ -361,7 +361,7 @@ class OSB_Workflow_Automation {
 
         wp_send_json_success(array(
             'message' => sprintf(
-                __('Bulk operation completed. %d successful, %d failed.', 'omafuru-spelling-bee'),
+                __('Bulk operation completed. %d successful, %d failed.', 'spelling-bee-pro'),
                 $results['success'],
                 $results['failed']
             ),
@@ -393,7 +393,7 @@ class OSB_Workflow_Automation {
      */
     public function getAdminNotifications() {
         if (!current_user_can('osb_manage_registrations')) {
-            wp_send_json_error(__('Permission denied.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Permission denied.', 'spelling-bee-pro'));
         }
 
         global $wpdb;
@@ -414,7 +414,7 @@ class OSB_Workflow_Automation {
      */
     public function markNotificationRead() {
         if (!current_user_can('osb_manage_registrations')) {
-            wp_send_json_error(__('Permission denied.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Permission denied.', 'spelling-bee-pro'));
         }
 
         $notification_id = intval($_POST['notification_id']);
@@ -431,9 +431,9 @@ class OSB_Workflow_Automation {
         );
 
         if ($result !== false) {
-            wp_send_json_success(__('Notification marked as read.', 'omafuru-spelling-bee'));
+            wp_send_json_success(__('Notification marked as read.', 'spelling-bee-pro'));
         } else {
-            wp_send_json_error(__('Failed to update notification.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Failed to update notification.', 'spelling-bee-pro'));
         }
     }
 
@@ -493,7 +493,7 @@ class OSB_Workflow_Automation {
         foreach ($stalled as $registration) {
             $this->createAdminNotification(
                 'stalled_registration',
-                sprintf(__('Registration #%d has been pending for over 7 days', 'omafuru-spelling-bee'), $registration->id),
+                sprintf(__('Registration #%d has been pending for over 7 days', 'spelling-bee-pro'), $registration->id),
                 array(
                     'registration_id' => $registration->id,
                     'priority' => 'high'
@@ -522,7 +522,7 @@ class OSB_Workflow_Automation {
         if ($stats && $stats->new_today > 0) {
             $this->createAdminNotification(
                 'daily_summary',
-                sprintf(__('Daily Summary: %d new registrations', 'omafuru-spelling-bee'), $stats->new_today),
+                sprintf(__('Daily Summary: %d new registrations', 'spelling-bee-pro'), $stats->new_today),
                 array(
                     'stats' => $stats,
                     'priority' => 'low'
@@ -556,7 +556,7 @@ class OSB_Workflow_Automation {
             $this->createAdminNotification(
                 'deadline_reminder',
                 sprintf(
-                    __('Event "%s" is in %d days - check registration status', 'omafuru-spelling-bee'),
+                    __('Event "%s" is in %d days - check registration status', 'spelling-bee-pro'),
                     $event->title,
                     $days_until_event
                 ),

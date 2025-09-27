@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 ?>
 
 <div class="wrap">
-    <h1><?php _e('Spelling Bee Dashboard', 'omafuru-spelling-bee'); ?></h1>
+    <h1><?php _e('Spelling Bee Dashboard', 'spelling-bee-pro'); ?></h1>
 
     <?php settings_errors('osb_dashboard'); ?>
 
@@ -24,16 +24,16 @@ if (!defined('ABSPATH')) {
         <?php if ($current_event): ?>
             <div class="osb-current-event">
                 <h2><?php echo esc_html($current_event->title); ?></h2>
-                <p><strong><?php _e('Date:', 'omafuru-spelling-bee'); ?></strong> <?php echo date('F j, Y', strtotime($current_event->event_date)); ?></p>
-                <p><strong><?php _e('Status:', 'omafuru-spelling-bee'); ?></strong> <span class="osb-status osb-status-<?php echo esc_attr($current_event->status); ?>"><?php echo esc_html(ucfirst($current_event->status)); ?></span></p>
-                <p><strong><?php _e('Venue:', 'omafuru-spelling-bee'); ?></strong> <?php echo esc_html($current_event->venue_name); ?></p>
+                <p><strong><?php _e('Date:', 'spelling-bee-pro'); ?></strong> <?php echo date('F j, Y', strtotime($current_event->event_date)); ?></p>
+                <p><strong><?php _e('Status:', 'spelling-bee-pro'); ?></strong> <span class="osb-status osb-status-<?php echo esc_attr($current_event->status); ?>"><?php echo esc_html(ucfirst($current_event->status)); ?></span></p>
+                <p><strong><?php _e('Venue:', 'spelling-bee-pro'); ?></strong> <?php echo esc_html($current_event->venue_name); ?></p>
             </div>
         <?php else: ?>
             <div class="osb-no-event">
-                <h2><?php _e('No Active Event', 'omafuru-spelling-bee'); ?></h2>
-                <p><?php _e('Create a new event to get started.', 'omafuru-spelling-bee'); ?></p>
+                <h2><?php _e('No Active Event', 'spelling-bee-pro'); ?></h2>
+                <p><?php _e('Create a new event to get started.', 'spelling-bee-pro'); ?></p>
                 <a href="<?php echo admin_url('admin.php?page=spelling-bee-events&action=new'); ?>" class="button button-primary">
-                    <?php _e('Create New Event', 'omafuru-spelling-bee'); ?>
+                    <?php _e('Create New Event', 'spelling-bee-pro'); ?>
                 </a>
             </div>
         <?php endif; ?>
@@ -43,25 +43,25 @@ if (!defined('ABSPATH')) {
     <div class="osb-stats-grid">
         <div class="osb-stat-card">
             <div class="osb-stat-number"><?php echo intval($stats['total_events']); ?></div>
-            <div class="osb-stat-label"><?php _e('Total Events', 'omafuru-spelling-bee'); ?></div>
+            <div class="osb-stat-label"><?php _e('Total Events', 'spelling-bee-pro'); ?></div>
             <div class="osb-stat-icon">📅</div>
         </div>
 
         <div class="osb-stat-card">
             <div class="osb-stat-number"><?php echo intval($stats['total_schools']); ?></div>
-            <div class="osb-stat-label"><?php _e('Registered Schools', 'omafuru-spelling-bee'); ?></div>
+            <div class="osb-stat-label"><?php _e('Registered Schools', 'spelling-bee-pro'); ?></div>
             <div class="osb-stat-icon">🏫</div>
         </div>
 
         <div class="osb-stat-card">
             <div class="osb-stat-number"><?php echo intval($stats['total_students']); ?></div>
-            <div class="osb-stat-label"><?php _e('Students', 'omafuru-spelling-bee'); ?></div>
+            <div class="osb-stat-label"><?php _e('Students', 'spelling-bee-pro'); ?></div>
             <div class="osb-stat-icon">👨‍🎓</div>
         </div>
 
         <div class="osb-stat-card">
             <div class="osb-stat-number">$<?php echo number_format(floatval($stats['total_donations']), 2); ?></div>
-            <div class="osb-stat-label"><?php _e('Total Donations', 'omafuru-spelling-bee'); ?></div>
+            <div class="osb-stat-label"><?php _e('Total Donations', 'spelling-bee-pro'); ?></div>
             <div class="osb-stat-icon">💰</div>
         </div>
     </div>
@@ -69,7 +69,7 @@ if (!defined('ABSPATH')) {
     <!-- Registration Status Breakdown -->
     <?php if (!empty($stats['registrations'])): ?>
     <div class="osb-dashboard-section">
-        <h3><?php _e('Registration Status', 'omafuru-spelling-bee'); ?></h3>
+        <h3><?php _e('Registration Status', 'spelling-bee-pro'); ?></h3>
         <div class="osb-registration-stats">
             <?php foreach ($stats['registrations'] as $status => $data): ?>
                 <div class="osb-reg-stat">
@@ -87,7 +87,7 @@ if (!defined('ABSPATH')) {
         <div class="osb-dashboard-left">
             <!-- Recent Registrations -->
             <div class="osb-dashboard-section">
-                <h3><?php _e('Recent Registrations', 'omafuru-spelling-bee'); ?></h3>
+                <h3><?php _e('Recent Registrations', 'spelling-bee-pro'); ?></h3>
                 <?php if (!empty($recent_registrations)): ?>
                     <div class="osb-recent-list">
                         <?php foreach ($recent_registrations as $registration): ?>
@@ -110,7 +110,7 @@ if (!defined('ABSPATH')) {
                                 <div class="osb-recent-actions">
                                     <a href="<?php echo admin_url('admin.php?page=spelling-bee-registrations&action=view&registration_id=' . $registration->id); ?>"
                                        class="button button-small">
-                                        <?php _e('View', 'omafuru-spelling-bee'); ?>
+                                        <?php _e('View', 'spelling-bee-pro'); ?>
                                     </a>
                                 </div>
                             </div>
@@ -118,11 +118,11 @@ if (!defined('ABSPATH')) {
                     </div>
                     <div class="osb-section-footer">
                         <a href="<?php echo admin_url('admin.php?page=spelling-bee-registrations'); ?>" class="button">
-                            <?php _e('View All Registrations', 'omafuru-spelling-bee'); ?>
+                            <?php _e('View All Registrations', 'spelling-bee-pro'); ?>
                         </a>
                     </div>
                 <?php else: ?>
-                    <p><?php _e('No registrations yet.', 'omafuru-spelling-bee'); ?></p>
+                    <p><?php _e('No registrations yet.', 'spelling-bee-pro'); ?></p>
                 <?php endif; ?>
             </div>
         </div>
@@ -131,7 +131,7 @@ if (!defined('ABSPATH')) {
             <!-- Pending User Conflicts -->
             <?php if (!empty($pending_conflicts)): ?>
             <div class="osb-dashboard-section osb-conflicts-section">
-                <h3><?php _e('Pending User Conflicts', 'omafuru-spelling-bee'); ?>
+                <h3><?php _e('Pending User Conflicts', 'spelling-bee-pro'); ?>
                     <span class="osb-conflict-count"><?php echo count($pending_conflicts); ?></span>
                 </h3>
                 <div class="osb-conflict-list">
@@ -146,14 +146,14 @@ if (!defined('ABSPATH')) {
                                     <small><?php echo esc_html($conflict->existing_user_email); ?></small>
                                 </div>
                                 <div class="osb-conflict-confidence">
-                                    <?php _e('Confidence:', 'omafuru-spelling-bee'); ?>
+                                    <?php _e('Confidence:', 'spelling-bee-pro'); ?>
                                     <span class="osb-confidence-score"><?php echo intval($conflict->confidence_score); ?>%</span>
                                 </div>
                             </div>
                             <div class="osb-conflict-actions">
                                 <a href="<?php echo admin_url('admin.php?page=spelling-bee-conflicts'); ?>"
                                    class="button button-small button-primary">
-                                    <?php _e('Resolve', 'omafuru-spelling-bee'); ?>
+                                    <?php _e('Resolve', 'spelling-bee-pro'); ?>
                                 </a>
                             </div>
                         </div>
@@ -161,7 +161,7 @@ if (!defined('ABSPATH')) {
                 </div>
                 <div class="osb-section-footer">
                     <a href="<?php echo admin_url('admin.php?page=spelling-bee-conflicts'); ?>" class="button">
-                        <?php _e('View All Conflicts', 'omafuru-spelling-bee'); ?>
+                        <?php _e('View All Conflicts', 'spelling-bee-pro'); ?>
                     </a>
                 </div>
             </div>
@@ -169,57 +169,57 @@ if (!defined('ABSPATH')) {
 
             <!-- Quick Actions -->
             <div class="osb-dashboard-section">
-                <h3><?php _e('Quick Actions', 'omafuru-spelling-bee'); ?></h3>
+                <h3><?php _e('Quick Actions', 'spelling-bee-pro'); ?></h3>
                 <div class="osb-quick-actions">
                     <a href="<?php echo admin_url('admin.php?page=spelling-bee-events&action=new'); ?>"
                        class="osb-quick-action">
                         <span class="osb-action-icon">📅</span>
-                        <span class="osb-action-text"><?php _e('Create Event', 'omafuru-spelling-bee'); ?></span>
+                        <span class="osb-action-text"><?php _e('Create Event', 'spelling-bee-pro'); ?></span>
                     </a>
 
                     <a href="<?php echo admin_url('admin.php?page=spelling-bee-schools&action=new'); ?>"
                        class="osb-quick-action">
                         <span class="osb-action-icon">🏫</span>
-                        <span class="osb-action-text"><?php _e('Add School', 'omafuru-spelling-bee'); ?></span>
+                        <span class="osb-action-text"><?php _e('Add School', 'spelling-bee-pro'); ?></span>
                     </a>
 
                     <a href="<?php echo admin_url('admin.php?page=spelling-bee-communications'); ?>"
                        class="osb-quick-action">
                         <span class="osb-action-icon">📧</span>
-                        <span class="osb-action-text"><?php _e('Send Email', 'omafuru-spelling-bee'); ?></span>
+                        <span class="osb-action-text"><?php _e('Send Email', 'spelling-bee-pro'); ?></span>
                     </a>
 
                     <a href="<?php echo admin_url('admin.php?page=spelling-bee-reports'); ?>"
                        class="osb-quick-action">
                         <span class="osb-action-icon">📊</span>
-                        <span class="osb-action-text"><?php _e('Generate Report', 'omafuru-spelling-bee'); ?></span>
+                        <span class="osb-action-text"><?php _e('Generate Report', 'spelling-bee-pro'); ?></span>
                     </a>
                 </div>
             </div>
 
             <!-- System Status -->
             <div class="osb-dashboard-section">
-                <h3><?php _e('System Status', 'omafuru-spelling-bee'); ?></h3>
+                <h3><?php _e('System Status', 'spelling-bee-pro'); ?></h3>
                 <div class="osb-system-status">
                     <div class="osb-status-item">
-                        <span class="osb-status-label"><?php _e('Plugin Version:', 'omafuru-spelling-bee'); ?></span>
+                        <span class="osb-status-label"><?php _e('Plugin Version:', 'spelling-bee-pro'); ?></span>
                         <span class="osb-status-value"><?php echo OSB_PLUGIN_VERSION; ?></span>
                     </div>
 
                     <div class="osb-status-item">
-                        <span class="osb-status-label"><?php _e('Database Status:', 'omafuru-spelling-bee'); ?></span>
-                        <span class="osb-status-value osb-status-good"><?php _e('Connected', 'omafuru-spelling-bee'); ?></span>
+                        <span class="osb-status-label"><?php _e('Database Status:', 'spelling-bee-pro'); ?></span>
+                        <span class="osb-status-value osb-status-good"><?php _e('Connected', 'spelling-bee-pro'); ?></span>
                     </div>
 
                     <div class="osb-status-item">
-                        <span class="osb-status-label"><?php _e('Email System:', 'omafuru-spelling-bee'); ?></span>
-                        <span class="osb-status-value osb-status-good"><?php _e('Active', 'omafuru-spelling-bee'); ?></span>
+                        <span class="osb-status-label"><?php _e('Email System:', 'spelling-bee-pro'); ?></span>
+                        <span class="osb-status-value osb-status-good"><?php _e('Active', 'spelling-bee-pro'); ?></span>
                     </div>
 
                     <?php if (!empty($pending_conflicts)): ?>
                     <div class="osb-status-item osb-status-warning">
-                        <span class="osb-status-label"><?php _e('User Conflicts:', 'omafuru-spelling-bee'); ?></span>
-                        <span class="osb-status-value"><?php echo count($pending_conflicts); ?> <?php _e('pending', 'omafuru-spelling-bee'); ?></span>
+                        <span class="osb-status-label"><?php _e('User Conflicts:', 'spelling-bee-pro'); ?></span>
+                        <span class="osb-status-value"><?php echo count($pending_conflicts); ?> <?php _e('pending', 'spelling-bee-pro'); ?></span>
                     </div>
                     <?php endif; ?>
                 </div>

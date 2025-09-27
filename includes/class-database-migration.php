@@ -15,7 +15,7 @@ class OSB_Database_Migration {
     /**
      * Current database version
      */
-    const DB_VERSION = '1.2.0';
+    const DB_VERSION = '1.2.2';
 
     /**
      * Run necessary database migrations
@@ -41,6 +41,16 @@ class OSB_Database_Migration {
         // Migration for version 1.2.0 - Workflow Automation
         if (version_compare($current_version, '1.2.0', '<')) {
             self::migration_1_2_0();
+        }
+
+        // Migration for version 1.2.1 - Add expression_of_interest column
+        if (version_compare($current_version, '1.2.1', '<')) {
+            self::migration_1_2_1();
+        }
+
+        // Migration for version 1.2.2 - Add missing student columns
+        if (version_compare($current_version, '1.2.2', '<')) {
+            self::migration_1_2_2();
         }
     }
 
@@ -101,6 +111,75 @@ class OSB_Database_Migration {
 
         error_log('OSB Migration 1.2.0 completed successfully');
         return true;
+    }
+
+    /**
+     * Migration 1.2.1 - Add expression_of_interest column to registrations table
+     */
+    private static function migration_1_2_1() {
+        global $wpdb;
+        $table_prefix = $wpdb->prefix . OSB_TABLE_PREFIX;
+
+        // Check if column already exists
+        $column_exists = $wpdb->get_results("SHOW COLUMNS FROM {$table_prefix}registrations LIKE 'expression_of_interest'");
+
+        if (empty($column_exists)) {
+            $sql = "ALTER TABLE {$table_prefix}registrations
+                    ADD COLUMN expression_of_interest varchar(500) DEFAULT NULL COMMENT 'URL to uploaded expression of interest document' AFTER documents_uploaded";
+
+            $result = $wpdb->query($sql);
+
+            if ($result === false) {
+                error_log('OSB Migration 1.2.1 failed: ' . $wpdb->last_error);
+                return false;
+            }
+
+            error_log('OSB Migration 1.2.1 completed successfully - added expression_of_interest column');
+        } else {
+            error_log('OSB Migration 1.2.1 skipped - expression_of_interest column already exists');
+        }
+
+        return true;
+    }
+
+    /**
+     * Migration 1.2.2 - Add missing student columns
+     */
+    private static function migration_1_2_2() {
+        global $wpdb;
+        $table_prefix = $wpdb->prefix . OSB_TABLE_PREFIX;
+
+        // Check if columns exist and add them if they don't
+        $columns_to_add = [
+            'grade_level' => "varchar(10) DEFAULT NULL COMMENT 'Student grade level'"
+        ];
+
+        $success = true;
+
+        foreach ($columns_to_add as $column_name => $column_definition) {
+            // Check if column already exists
+            $column_exists = $wpdb->get_results("SHOW COLUMNS FROM {$table_prefix}students LIKE '{$column_name}'");
+
+            if (empty($column_exists)) {
+                $sql = "ALTER TABLE {$table_prefix}students ADD COLUMN {$column_name} {$column_definition}";
+                $result = $wpdb->query($sql);
+
+                if ($result === false) {
+                    error_log("OSB Migration 1.2.2 failed adding {$column_name}: " . $wpdb->last_error);
+                    $success = false;
+                } else {
+                    error_log("OSB Migration 1.2.2 successfully added {$column_name} column");
+                }
+            } else {
+                error_log("OSB Migration 1.2.2 skipped {$column_name} - column already exists");
+            }
+        }
+
+        if ($success) {
+            error_log('OSB Migration 1.2.2 completed successfully - added missing student columns');
+        }
+
+        return $success;
     }
 
     /**

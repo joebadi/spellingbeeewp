@@ -337,7 +337,7 @@ if (!empty($event->description) && stripos($event->description, 'final') !== fal
 <style>
 /* Hero Section - Professional Layout - FULL WIDTH BREAKTHROUGH */
 .osb-event-hero {
-    background: #000;
+    background: linear-gradient(135deg, #0052cc 0%, #003d99 50%, #004080 100%);
     color: white;
     padding: 1rem 0;
     margin: 0;
@@ -348,6 +348,37 @@ if (!empty($event->description) && stripos($event->description, 'final') !== fal
     margin-left: calc(-50vw + 50%);
     margin-right: calc(-50vw + 50%);
     box-sizing: border-box;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 82, 204, 0.3);
+}
+
+.osb-event-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400"><defs><radialGradient id="grad1" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:rgba(255,255,255,0.1);stop-opacity:1" /><stop offset="100%" style="stop-color:rgba(255,255,255,0);stop-opacity:0" /></radialGradient></defs><circle cx="200" cy="100" r="80" fill="url(%23grad1)"/><circle cx="900" cy="150" r="120" fill="rgba(255,255,255,0.05)"/><circle cx="600" cy="320" r="60" fill="rgba(255,255,255,0.08)"/><circle cx="1000" cy="250" r="40" fill="rgba(255,255,255,0.06)"/><circle cx="100" cy="300" r="50" fill="rgba(255,255,255,0.04)"/></svg>');
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+.osb-event-hero::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+    animation: float 8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-15px) rotate(3deg); }
 }
 
 .osb-hero-container {
@@ -355,6 +386,8 @@ if (!empty($event->description) && stripos($event->description, 'final') !== fal
     width: 100%;
     margin: 0;
     padding: 0;
+    position: relative;
+    z-index: 2;
 }
 
 .osb-hero-header {
@@ -420,7 +453,7 @@ if (!empty($event->description) && stripos($event->description, 'final') !== fal
 .osb-upcoming-flyer {
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    background: linear-gradient(135deg, #0052cc, #003d99);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -574,17 +607,17 @@ if (!empty($event->description) && stripos($event->description, 'final') !== fal
 
 /* Video Reel */
 .osb-video-reel {
-    background: rgba(255,255,255,0.1);
-    border-radius: 15px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 20px;
     padding: 1rem;
     height: 550px;
     width: 300px;
     min-width: 300px;
     max-width: 300px;
     overflow-y: auto;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-    border: 1px solid rgba(255,255,255,0.15);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 10px 35px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
 .osb-reel-title {
@@ -635,7 +668,7 @@ if (!empty($event->description) && stripos($event->description, 'final') !== fal
 }
 
 .osb-reel-current .osb-reel-placeholder {
-    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    background: linear-gradient(135deg, #0052cc, #003d99);
 }
 
 .osb-reel-placeholder {
@@ -757,18 +790,18 @@ if (!empty($event->description) && stripos($event->description, 'final') !== fal
 
 /* Active/Current Video Styling */
 .osb-reel-current .osb-reel-placeholder {
-    background: linear-gradient(135deg, #ff6b6b, #ee5a24) !important;
-    border: 2px solid #ff8c42;
+    background: linear-gradient(135deg, #0052cc, #003d99) !important;
+    border: 2px solid #4a9eff;
 }
 
 .osb-reel-video.osb-active .osb-reel-thumbnail {
-    border: 2px solid #ff6b6b;
-    box-shadow: 0 0 15px rgba(255,107,107,0.5);
+    border: 2px solid #0052cc;
+    box-shadow: 0 0 15px rgba(0,82,204,0.5);
 }
 
 .osb-reel-video.osb-active .osb-reel-placeholder {
-    border: 2px solid #ff6b6b;
-    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    border: 2px solid #0052cc;
+    background: linear-gradient(135deg, #0052cc, #003d99);
 }
 
 /* Improved Hover States */
@@ -1092,8 +1125,9 @@ if (!empty($event->description) && stripos($event->description, 'final') !== fal
         gap: 1rem;
         align-items: flex-start;
         position: relative;
-        background: rgba(255,255,255,0.1);
-        border-radius: 0;
+        background: rgba(255,255,255,0.15);
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
     }
 
     .osb-reel-title {
@@ -1783,13 +1817,13 @@ jQuery(document).ready(function($) {
 
 .osb-reel-video.osb-active {
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(255,107,107,0.4);
-    border-color: #ff6b6b;
+    box-shadow: 0 4px 15px rgba(0,82,204,0.4);
+    border-color: #0052cc;
 }
 
 .osb-reel-video.osb-active {
     transform: scale(1.02);
-    box-shadow: 0 4px 15px rgba(255,107,107,0.4);
-    border: 2px solid #ff6b6b;
+    box-shadow: 0 4px 15px rgba(0,82,204,0.4);
+    border: 2px solid #0052cc;
 }
 </style>

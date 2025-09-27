@@ -13,21 +13,21 @@ $recent_notifications = $stats['recent'] ?? array();
 ?>
 
 <div class="wrap">
-    <h1><?php _e('Workflow Automation', 'omafuru-spelling-bee'); ?></h1>
+    <h1><?php _e('Workflow Automation', 'spelling-bee-pro'); ?></h1>
 
     <!-- Summary Cards -->
     <div class="osb-automation-summary">
         <div class="osb-summary-cards">
             <div class="osb-summary-card">
-                <h3><?php _e('Total Notifications', 'omafuru-spelling-bee'); ?></h3>
+                <h3><?php _e('Total Notifications', 'spelling-bee-pro'); ?></h3>
                 <div class="osb-card-number"><?php echo intval($notification_stats->total ?? 0); ?></div>
             </div>
             <div class="osb-summary-card osb-card-warning">
-                <h3><?php _e('Unread', 'omafuru-spelling-bee'); ?></h3>
+                <h3><?php _e('Unread', 'spelling-bee-pro'); ?></h3>
                 <div class="osb-card-number"><?php echo intval($notification_stats->unread ?? 0); ?></div>
             </div>
             <div class="osb-summary-card osb-card-danger">
-                <h3><?php _e('High Priority', 'omafuru-spelling-bee'); ?></h3>
+                <h3><?php _e('High Priority', 'spelling-bee-pro'); ?></h3>
                 <div class="osb-card-number"><?php echo intval($notification_stats->high_priority ?? 0); ?></div>
             </div>
         </div>
@@ -35,40 +35,40 @@ $recent_notifications = $stats['recent'] ?? array();
 
     <!-- Automation Controls -->
     <div class="osb-automation-controls">
-        <h2><?php _e('Automation Controls', 'omafuru-spelling-bee'); ?></h2>
+        <h2><?php _e('Automation Controls', 'spelling-bee-pro'); ?></h2>
 
         <div class="osb-control-section">
-            <h3><?php _e('Bulk Operations', 'omafuru-spelling-bee'); ?></h3>
-            <p><?php _e('Perform bulk operations on multiple registrations:', 'omafuru-spelling-bee'); ?></p>
+            <h3><?php _e('Bulk Operations', 'spelling-bee-pro'); ?></h3>
+            <p><?php _e('Perform bulk operations on multiple registrations:', 'spelling-bee-pro'); ?></p>
 
             <form id="osb-bulk-operations-form" method="post">
                 <?php wp_nonce_field('osb_bulk_operation', 'bulk_nonce'); ?>
 
                 <div class="osb-form-row">
-                    <label for="bulk-action"><?php _e('Select Action:', 'omafuru-spelling-bee'); ?></label>
+                    <label for="bulk-action"><?php _e('Select Action:', 'spelling-bee-pro'); ?></label>
                     <select id="bulk-action" name="bulk_action">
-                        <option value=""><?php _e('Choose an action...', 'omafuru-spelling-bee'); ?></option>
-                        <option value="approve_all"><?php _e('Approve All Selected', 'omafuru-spelling-bee'); ?></option>
-                        <option value="mark_documents_submitted"><?php _e('Mark as Documents Submitted', 'omafuru-spelling-bee'); ?></option>
-                        <option value="send_reminder"><?php _e('Send Reminder Emails', 'omafuru-spelling-bee'); ?></option>
+                        <option value=""><?php _e('Choose an action...', 'spelling-bee-pro'); ?></option>
+                        <option value="approve_all"><?php _e('Approve All Selected', 'spelling-bee-pro'); ?></option>
+                        <option value="mark_documents_submitted"><?php _e('Mark as Documents Submitted', 'spelling-bee-pro'); ?></option>
+                        <option value="send_reminder"><?php _e('Send Reminder Emails', 'spelling-bee-pro'); ?></option>
                     </select>
                 </div>
 
                 <div class="osb-form-row">
-                    <label for="registration-filter"><?php _e('Filter Registrations:', 'omafuru-spelling-bee'); ?></label>
+                    <label for="registration-filter"><?php _e('Filter Registrations:', 'spelling-bee-pro'); ?></label>
                     <select id="registration-filter" name="registration_filter">
-                        <option value="pending"><?php _e('Pending Registrations', 'omafuru-spelling-bee'); ?></option>
-                        <option value="documents_submitted"><?php _e('Documents Submitted', 'omafuru-spelling-bee'); ?></option>
-                        <option value="under_review"><?php _e('Under Review', 'omafuru-spelling-bee'); ?></option>
+                        <option value="pending"><?php _e('Pending Registrations', 'spelling-bee-pro'); ?></option>
+                        <option value="documents_submitted"><?php _e('Documents Submitted', 'spelling-bee-pro'); ?></option>
+                        <option value="under_review"><?php _e('Under Review', 'spelling-bee-pro'); ?></option>
                     </select>
                 </div>
 
                 <button type="button" id="preview-bulk-action" class="button button-secondary">
-                    <?php _e('Preview Affected Registrations', 'omafuru-spelling-bee'); ?>
+                    <?php _e('Preview Affected Registrations', 'spelling-bee-pro'); ?>
                 </button>
 
                 <button type="submit" class="button button-primary" disabled>
-                    <?php _e('Execute Bulk Operation', 'omafuru-spelling-bee'); ?>
+                    <?php _e('Execute Bulk Operation', 'spelling-bee-pro'); ?>
                 </button>
             </form>
         </div>
@@ -76,10 +76,10 @@ $recent_notifications = $stats['recent'] ?? array();
 
     <!-- Recent Notifications -->
     <div class="osb-recent-notifications">
-        <h2><?php _e('Recent Notifications', 'omafuru-spelling-bee'); ?></h2>
+        <h2><?php _e('Recent Notifications', 'spelling-bee-pro'); ?></h2>
 
         <?php if (empty($recent_notifications)): ?>
-            <p><?php _e('No notifications yet. Automation will generate notifications as events occur.', 'omafuru-spelling-bee'); ?></p>
+            <p><?php _e('No notifications yet. Automation will generate notifications as events occur.', 'spelling-bee-pro'); ?></p>
         <?php else: ?>
             <div class="osb-notifications-list">
                 <?php foreach ($recent_notifications as $notification): ?>
@@ -92,7 +92,7 @@ $recent_notifications = $stats['recent'] ?? array();
                                 <?php endif; ?>
                             </div>
                             <div class="osb-notification-time">
-                                <?php echo human_time_diff(strtotime($notification->created_at), current_time('timestamp')) . ' ' . __('ago', 'omafuru-spelling-bee'); ?>
+                                <?php echo human_time_diff(strtotime($notification->created_at), current_time('timestamp')) . ' ' . __('ago', 'spelling-bee-pro'); ?>
                             </div>
                         </div>
                         <div class="osb-notification-message">
@@ -101,7 +101,7 @@ $recent_notifications = $stats['recent'] ?? array();
                         <?php if (!$notification->is_read): ?>
                             <div class="osb-notification-actions">
                                 <button type="button" class="button-link mark-as-read" data-notification-id="<?php echo $notification->id; ?>">
-                                    <?php _e('Mark as Read', 'omafuru-spelling-bee'); ?>
+                                    <?php _e('Mark as Read', 'spelling-bee-pro'); ?>
                                 </button>
                             </div>
                         <?php endif; ?>
@@ -113,38 +113,38 @@ $recent_notifications = $stats['recent'] ?? array();
 
     <!-- Automation Status -->
     <div class="osb-automation-status">
-        <h2><?php _e('Automation Status', 'omafuru-spelling-bee'); ?></h2>
+        <h2><?php _e('Automation Status', 'spelling-bee-pro'); ?></h2>
 
         <div class="osb-status-grid">
             <div class="osb-status-item">
                 <div class="osb-status-icon osb-status-active">✓</div>
                 <div class="osb-status-text">
-                    <strong><?php _e('Email Automation', 'omafuru-spelling-bee'); ?></strong>
-                    <p><?php _e('Document checklists and reminders are being sent automatically', 'omafuru-spelling-bee'); ?></p>
+                    <strong><?php _e('Email Automation', 'spelling-bee-pro'); ?></strong>
+                    <p><?php _e('Document checklists and reminders are being sent automatically', 'spelling-bee-pro'); ?></p>
                 </div>
             </div>
 
             <div class="osb-status-item">
                 <div class="osb-status-icon osb-status-active">✓</div>
                 <div class="osb-status-text">
-                    <strong><?php _e('School Classification', 'omafuru-spelling-bee'); ?></strong>
-                    <p><?php _e('Schools are automatically classified based on participation history', 'omafuru-spelling-bee'); ?></p>
+                    <strong><?php _e('School Classification', 'spelling-bee-pro'); ?></strong>
+                    <p><?php _e('Schools are automatically classified based on participation history', 'spelling-bee-pro'); ?></p>
                 </div>
             </div>
 
             <div class="osb-status-item">
                 <div class="osb-status-icon osb-status-active">✓</div>
                 <div class="osb-status-text">
-                    <strong><?php _e('Progress Tracking', 'omafuru-spelling-bee'); ?></strong>
-                    <p><?php _e('Registration progress is automatically saved and can be resumed', 'omafuru-spelling-bee'); ?></p>
+                    <strong><?php _e('Progress Tracking', 'spelling-bee-pro'); ?></strong>
+                    <p><?php _e('Registration progress is automatically saved and can be resumed', 'spelling-bee-pro'); ?></p>
                 </div>
             </div>
 
             <div class="osb-status-item">
                 <div class="osb-status-icon osb-status-active">✓</div>
                 <div class="osb-status-text">
-                    <strong><?php _e('File Upload Optimization', 'omafuru-spelling-bee'); ?></strong>
-                    <p><?php _e('Mobile uploads are compressed and uploaded progressively', 'omafuru-spelling-bee'); ?></p>
+                    <strong><?php _e('File Upload Optimization', 'spelling-bee-pro'); ?></strong>
+                    <p><?php _e('Mobile uploads are compressed and uploaded progressively', 'spelling-bee-pro'); ?></p>
                 </div>
             </div>
         </div>
@@ -187,11 +187,11 @@ jQuery(document).ready(function($) {
         const filter = $('#registration-filter').val();
 
         if (!action) {
-            alert('<?php _e("Please select an action first.", "omafuru-spelling-bee"); ?>');
+            alert('<?php _e("Please select an action first.", "spelling-bee-pro"); ?>');
             return;
         }
 
-        $(this).prop('disabled', true).text('<?php _e("Loading...", "omafuru-spelling-bee"); ?>');
+        $(this).prop('disabled', true).text('<?php _e("Loading...", "spelling-bee-pro"); ?>');
 
         $.ajax({
             url: ajaxurl,
@@ -207,13 +207,13 @@ jQuery(document).ready(function($) {
                 if (response.success) {
                     const data = response.data;
                     let previewHtml = '<div class="osb-bulk-preview">';
-                    previewHtml += '<h3><?php _e("Bulk Operation Preview", "omafuru-spelling-bee"); ?></h3>';
-                    previewHtml += '<p><strong><?php _e("Action:", "omafuru-spelling-bee"); ?></strong> ' + data.action_description + '</p>';
-                    previewHtml += '<p><strong><?php _e("Affected Registrations:", "omafuru-spelling-bee"); ?></strong> ' + data.affected_count + '</p>';
+                    previewHtml += '<h3><?php _e("Bulk Operation Preview", "spelling-bee-pro"); ?></h3>';
+                    previewHtml += '<p><strong><?php _e("Action:", "spelling-bee-pro"); ?></strong> ' + data.action_description + '</p>';
+                    previewHtml += '<p><strong><?php _e("Affected Registrations:", "spelling-bee-pro"); ?></strong> ' + data.affected_count + '</p>';
 
                     if (data.registrations.length > 0) {
-                        previewHtml += '<h4><?php _e("Sample Affected Records:", "omafuru-spelling-bee"); ?></h4>';
-                        previewHtml += '<table class="widefat"><thead><tr><th><?php _e("ID", "omafuru-spelling-bee"); ?></th><th><?php _e("School", "omafuru-spelling-bee"); ?></th><th><?php _e("Status", "omafuru-spelling-bee"); ?></th></tr></thead><tbody>';
+                        previewHtml += '<h4><?php _e("Sample Affected Records:", "spelling-bee-pro"); ?></h4>';
+                        previewHtml += '<table class="widefat"><thead><tr><th><?php _e("ID", "spelling-bee-pro"); ?></th><th><?php _e("School", "spelling-bee-pro"); ?></th><th><?php _e("Status", "spelling-bee-pro"); ?></th></tr></thead><tbody>';
 
                         data.registrations.forEach(function(reg) {
                             previewHtml += '<tr><td>' + reg.id + '</td><td>' + reg.school_name + '</td><td>' + reg.status + '</td></tr>';
@@ -221,7 +221,7 @@ jQuery(document).ready(function($) {
 
                         previewHtml += '</tbody></table>';
                         if (data.total_found > data.registrations.length) {
-                            previewHtml += '<p><em><?php _e("... and", "omafuru-spelling-bee"); ?> ' + (data.total_found - data.registrations.length) + ' <?php _e("more registrations", "omafuru-spelling-bee"); ?></em></p>';
+                            previewHtml += '<p><em><?php _e("... and", "spelling-bee-pro"); ?> ' + (data.total_found - data.registrations.length) + ' <?php _e("more registrations", "spelling-bee-pro"); ?></em></p>';
                         }
                     }
 
@@ -236,14 +236,14 @@ jQuery(document).ready(function($) {
                     // Enable the execute button
                     $('button[type="submit"]').prop('disabled', false);
                 } else {
-                    alert('<?php _e("Error:", "omafuru-spelling-bee"); ?> ' + response.data);
+                    alert('<?php _e("Error:", "spelling-bee-pro"); ?> ' + response.data);
                 }
             },
             error: function() {
-                alert('<?php _e("An error occurred while previewing the bulk operation.", "omafuru-spelling-bee"); ?>');
+                alert('<?php _e("An error occurred while previewing the bulk operation.", "spelling-bee-pro"); ?>');
             },
             complete: function() {
-                $('#preview-bulk-action').prop('disabled', false).text('<?php _e("Preview Affected Registrations", "omafuru-spelling-bee"); ?>');
+                $('#preview-bulk-action').prop('disabled', false).text('<?php _e("Preview Affected Registrations", "spelling-bee-pro"); ?>');
             }
         });
     });
@@ -255,12 +255,12 @@ jQuery(document).ready(function($) {
         const action = $('#bulk-action').val();
         const filter = $('#registration-filter').val();
 
-        if (!confirm('<?php _e("Are you sure you want to execute this bulk operation?", "omafuru-spelling-bee"); ?>')) {
+        if (!confirm('<?php _e("Are you sure you want to execute this bulk operation?", "spelling-bee-pro"); ?>')) {
             return;
         }
 
         const $submitButton = $('button[type="submit"]');
-        $submitButton.prop('disabled', true).text('<?php _e("Processing...", "omafuru-spelling-bee"); ?>');
+        $submitButton.prop('disabled', true).text('<?php _e("Processing...", "spelling-bee-pro"); ?>');
 
         $.ajax({
             url: ajaxurl,
@@ -275,7 +275,7 @@ jQuery(document).ready(function($) {
             },
             success: function(response) {
                 if (response.success) {
-                    alert('<?php _e("Success:", "omafuru-spelling-bee"); ?> ' + response.data.message);
+                    alert('<?php _e("Success:", "spelling-bee-pro"); ?> ' + response.data.message);
 
                     // Clear the preview
                     $('#bulk-preview-container').remove();
@@ -283,20 +283,20 @@ jQuery(document).ready(function($) {
                     // Reset form
                     $('#bulk-action').val('');
                     $('#registration-filter').val('pending');
-                    $submitButton.prop('disabled', true).text('<?php _e("Execute Bulk Operation", "omafuru-spelling-bee"); ?>');
+                    $submitButton.prop('disabled', true).text('<?php _e("Execute Bulk Operation", "spelling-bee-pro"); ?>');
 
                     // Reload page to show updated notifications
                     window.location.reload();
                 } else {
-                    alert('<?php _e("Error:", "omafuru-spelling-bee"); ?> ' + response.data);
+                    alert('<?php _e("Error:", "spelling-bee-pro"); ?> ' + response.data);
                 }
             },
             error: function() {
-                alert('<?php _e("An error occurred while executing the bulk operation.", "omafuru-spelling-bee"); ?>');
+                alert('<?php _e("An error occurred while executing the bulk operation.", "spelling-bee-pro"); ?>');
             },
             complete: function() {
                 if (!response || !response.success) {
-                    $submitButton.prop('disabled', false).text('<?php _e("Execute Bulk Operation", "omafuru-spelling-bee"); ?>');
+                    $submitButton.prop('disabled', false).text('<?php _e("Execute Bulk Operation", "spelling-bee-pro"); ?>');
                 }
             }
         });

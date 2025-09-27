@@ -55,11 +55,13 @@ class OSB_User_Manager {
             return $this->handleExistingUser($existing_user, $form_data, 'school_representative');
         }
 
-        // Step 2: Search for potential matches
-        $potential_matches = $this->findPotentialMatches($email, $name, $phone);
+        // Step 2: Search for potential matches (skip for test emails)
+        if (strpos($email, '@testschool.local') === false) {
+            $potential_matches = $this->findPotentialMatches($email, $name, $phone);
 
-        if (!empty($potential_matches)) {
-            return $this->handlePotentialMatches($potential_matches, $form_data, 'school_representative');
+            if (!empty($potential_matches)) {
+                return $this->handlePotentialMatches($potential_matches, $form_data, 'school_representative');
+            }
         }
 
         // Step 3: Create new user
@@ -240,12 +242,12 @@ class OSB_User_Manager {
         // Update user meta
         $this->updateUserMeta($user_id, $form_data, $role);
 
-        // Send welcome email with password
-        $this->sendWelcomeEmail($user_id, $password, $role);
+        // Email will be sent after registration is created with token
 
         return array(
             'success' => true,
             'user_id' => $user_id,
+            'created' => true,
             'message' => 'New user created successfully',
             'action' => 'created_new',
             'password' => $password
@@ -292,8 +294,8 @@ class OSB_User_Manager {
         // Update user meta
         $this->updateParentUserMeta($user_id, $parent_data, $student_id);
 
-        // Send welcome email
-        $this->sendParentWelcomeEmail($user_id, $password);
+        // Email will be sent via proper email handler with templates
+        // $this->sendParentWelcomeEmail($user_id, $password);
 
         return array(
             'success' => true,
@@ -520,15 +522,15 @@ class OSB_User_Manager {
         $user = get_user_by('ID', $user_id);
         if (!$user) return;
 
-        $subject = sprintf(__('Welcome to %s Spelling Bee Competition', 'omafuru-spelling-bee'), get_option('osb_organization_name', 'Omafuru Foundation'));
+        $subject = sprintf(__('Welcome to %s Spelling Bee Competition', 'spelling-bee-pro'), get_option('osb_organization_name', 'Spelling Bee Organization'));
 
-        $message = sprintf(__('Hello %s,', 'omafuru-spelling-bee'), $user->display_name) . "\n\n";
-        $message .= __('Your account has been created for the spelling bee competition.', 'omafuru-spelling-bee') . "\n\n";
-        $message .= sprintf(__('Login URL: %s', 'omafuru-spelling-bee'), wp_login_url()) . "\n";
-        $message .= sprintf(__('Username: %s', 'omafuru-spelling-bee'), $user->user_login) . "\n";
-        $message .= sprintf(__('Password: %s', 'omafuru-spelling-bee'), $password) . "\n\n";
-        $message .= __('Please change your password after logging in.', 'omafuru-spelling-bee') . "\n\n";
-        $message .= __('Thank you!', 'omafuru-spelling-bee');
+        $message = sprintf(__('Hello %s,', 'spelling-bee-pro'), $user->display_name) . "\n\n";
+        $message .= __('Your account has been created for the spelling bee competition.', 'spelling-bee-pro') . "\n\n";
+        $message .= sprintf(__('Login URL: %s', 'spelling-bee-pro'), wp_login_url()) . "\n";
+        $message .= sprintf(__('Username: %s', 'spelling-bee-pro'), $user->user_login) . "\n";
+        $message .= sprintf(__('Password: %s', 'spelling-bee-pro'), $password) . "\n\n";
+        $message .= __('Please change your password after logging in.', 'spelling-bee-pro') . "\n\n";
+        $message .= __('Thank you!', 'spelling-bee-pro');
 
         wp_mail($user->user_email, $subject, $message);
     }
@@ -571,4 +573,148 @@ class OSB_User_Manager {
         // In production, you might want more sophisticated matching
         return $this->createNewParentUser($parent_data, $student_id);
     }
+
+    /**
+     * Create WordPress user for student upon approval
+     */
+    public function createStudentWordPressUser($student_id) {
+        global $wpdb;
+        $table_prefix = $wpdb->prefix . OSB_TABLE_PREFIX;
+
+        // Get student data
+        $student = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM {$table_prefix}students WHERE id = %d",
+            $student_id
+        ));
+
+        if (!$student) {
+            return array(
+                'success' => false,
+                'message' => 'Student not found'
+            );
+        }
+
+        // Skip if student doesn't have email
+        if (empty($student->email)) {
+            return array(
+                'success' => true,
+                'message' => 'Student has no email - skipped WordPress user creation',
+                'action' => 'skipped_no_email'
+            );
+        }
+
+        // Check if user already exists with this email
+        $existing_user = get_user_by('email', $student->email);
+        if ($existing_user) {
+            // Update the student record to link to existing user
+            $wpdb->update(
+                "{$table_prefix}students",
+                array('wp_user_id' => $existing_user->ID),
+                array('id' => $student_id),
+                array('%d'),
+                array('%d')
+            );
+
+            return array(
+                'success' => true,
+                'message' => 'Student linked to existing WordPress user',
+                'action' => 'linked_existing',
+                'user_id' => $existing_user->ID
+            );
+        }
+
+        // Create new WordPress user
+        $username = $this->generateUniqueUsername($student->email, $student->first_name . ' ' . $student->last_name);
+        $password = wp_generate_password(12, false);
+
+        $user_data = array(
+            'user_login' => $username,
+            'user_email' => $student->email,
+            'user_pass' => $password,
+            'display_name' => $student->first_name . ' ' . $student->last_name,
+            'first_name' => $student->first_name,
+            'last_name' => $student->last_name,
+            'role' => 'student'
+        );
+
+        $user_id = wp_insert_user($user_data);
+
+        if (is_wp_error($user_id)) {
+            return array(
+                'success' => false,
+                'message' => 'Failed to create WordPress user: ' . $user_id->get_error_message()
+            );
+        }
+
+        // Update student record with WordPress user ID
+        $wpdb->update(
+            "{$table_prefix}students",
+            array('wp_user_id' => $user_id),
+            array('id' => $student_id),
+            array('%d'),
+            array('%d')
+        );
+
+        // Add user meta
+        update_user_meta($user_id, 'osb_student_id', $student_id);
+        update_user_meta($user_id, 'osb_school_id', $student->school_id);
+        update_user_meta($user_id, 'osb_grade_level', $student->grade_level);
+        update_user_meta($user_id, 'osb_birth_date', $student->birth_date);
+
+        return array(
+            'success' => true,
+            'message' => 'WordPress user created successfully for student',
+            'action' => 'created_new',
+            'user_id' => $user_id,
+            'username' => $username,
+            'password' => $password
+        );
+    }
+
+    /**
+     * Create WordPress users for all students in an approved registration
+     */
+    public function createStudentsWordPressUsers($school_id) {
+        global $wpdb;
+        $table_prefix = $wpdb->prefix . OSB_TABLE_PREFIX;
+
+        // Get all students for this school
+        $students = $wpdb->get_results($wpdb->prepare(
+            "SELECT id FROM {$table_prefix}students WHERE school_id = %d",
+            $school_id
+        ));
+
+        $results = array(
+            'created' => 0,
+            'linked' => 0,
+            'skipped' => 0,
+            'failed' => 0,
+            'details' => array()
+        );
+
+        foreach ($students as $student) {
+            $result = $this->createStudentWordPressUser($student->id);
+
+            if ($result['success']) {
+                switch ($result['action']) {
+                    case 'created_new':
+                        $results['created']++;
+                        break;
+                    case 'linked_existing':
+                        $results['linked']++;
+                        break;
+                    case 'skipped_no_email':
+                        $results['skipped']++;
+                        break;
+                }
+            } else {
+                $results['failed']++;
+            }
+
+            $results['details'][] = $result;
+        }
+
+        return $results;
+    }
+
 }

@@ -52,9 +52,18 @@ $selected_school_id = intval($_GET['school_id'] ?? 0);
 
             <select id="osb-grade-filter" class="osb-filter-select">
                 <option value=""><?php _e('All Grades', 'spelling-bee-pro'); ?></option>
-                <?php for ($i = 1; $i <= 12; $i++): ?>
-                    <option value="<?php echo $i; ?>"><?php printf(__('Grade %d', 'spelling-bee-pro'), $i); ?></option>
-                <?php endfor; ?>
+                <option value="Primary 1"><?php _e('Primary 1', 'spelling-bee-pro'); ?></option>
+                <option value="Primary 2"><?php _e('Primary 2', 'spelling-bee-pro'); ?></option>
+                <option value="Primary 3"><?php _e('Primary 3', 'spelling-bee-pro'); ?></option>
+                <option value="Primary 4"><?php _e('Primary 4', 'spelling-bee-pro'); ?></option>
+                <option value="Primary 5"><?php _e('Primary 5', 'spelling-bee-pro'); ?></option>
+                <option value="Primary 6"><?php _e('Primary 6', 'spelling-bee-pro'); ?></option>
+                <option value="JSS1"><?php _e('JSS1', 'spelling-bee-pro'); ?></option>
+                <option value="JSS2"><?php _e('JSS2', 'spelling-bee-pro'); ?></option>
+                <option value="JSS3"><?php _e('JSS3', 'spelling-bee-pro'); ?></option>
+                <option value="SS1"><?php _e('SS1', 'spelling-bee-pro'); ?></option>
+                <option value="SS2"><?php _e('SS2', 'spelling-bee-pro'); ?></option>
+                <option value="SS3"><?php _e('SS3', 'spelling-bee-pro'); ?></option>
             </select>
 
             <select id="osb-gender-filter" class="osb-filter-select">
@@ -106,6 +115,9 @@ $selected_school_id = intval($_GET['school_id'] ?? 0);
                         </th>
                         <th scope="col" class="manage-column column-parent">
                             <?php _e('Parent/Guardian', 'spelling-bee-pro'); ?>
+                        </th>
+                        <th scope="col" class="manage-column column-wordpress-user">
+                            <?php _e('WordPress User', 'spelling-bee-pro'); ?>
                         </th>
                         <th scope="col" class="manage-column column-registrations">
                             <?php _e('Registrations', 'spelling-bee-pro'); ?>
@@ -199,8 +211,8 @@ $selected_school_id = intval($_GET['school_id'] ?? 0);
                             </td>
 
                             <td class="column-grade" data-colname="<?php _e('Grade', 'spelling-bee-pro'); ?>">
-                                <span class="osb-grade-badge osb-grade-<?php echo esc_attr($student->grade_level); ?>">
-                                    <?php printf(__('Grade %s', 'spelling-bee-pro'), esc_html($student->grade_level)); ?>
+                                <span class="osb-grade-badge osb-grade-<?php echo esc_attr(str_replace(' ', '-', strtolower($student->grade_level))); ?>">
+                                    <?php echo esc_html($student->grade_level); ?>
                                 </span>
                             </td>
 
@@ -239,6 +251,46 @@ $selected_school_id = intval($_GET['school_id'] ?? 0);
                                         <span class="osb-no-data"><?php _e('Not provided', 'spelling-bee-pro'); ?></span>
                                     <?php endif; ?>
                                 </div>
+                            </td>
+
+                            <td class="column-wordpress-user" data-colname="<?php _e('WordPress User', 'spelling-bee-pro'); ?>">
+                                <?php if (!empty($student->wp_user_id)): ?>
+                                    <?php $wp_user = get_userdata($student->wp_user_id); ?>
+                                    <?php if ($wp_user): ?>
+                                        <div class="osb-wp-user-info">
+                                            <strong>
+                                                <a href="<?php echo admin_url('user-edit.php?user_id=' . $student->wp_user_id); ?>" target="_blank">
+                                                    <?php echo esc_html($wp_user->display_name); ?>
+                                                </a>
+                                            </strong>
+                                            <br>
+                                            <small class="osb-username">@<?php echo esc_html($wp_user->user_login); ?></small>
+                                            <br>
+                                            <span class="osb-role-badge osb-role-student">
+                                                <?php _e('Student', 'spelling-bee-pro'); ?>
+                                            </span>
+                                        </div>
+                                    <?php else: ?>
+                                        <span class="osb-wp-user-error" title="<?php _e('WordPress user not found (ID: ' . $student->wp_user_id . ')', 'spelling-bee-pro'); ?>">
+                                            ⚠️ <?php _e('User Missing', 'spelling-bee-pro'); ?>
+                                        </span>
+                                    <?php endif; ?>
+                                <?php else: ?>
+                                    <span class="osb-no-wp-user">
+                                        <?php if (!empty($student->email)): ?>
+                                            <button type="button" class="button button-small osb-create-wp-user"
+                                                    data-student-id="<?php echo $student->id; ?>"
+                                                    title="<?php _e('Create WordPress user for this student', 'spelling-bee-pro'); ?>">
+                                                <span class="dashicons dashicons-plus-alt2"></span>
+                                                <?php _e('Create User', 'spelling-bee-pro'); ?>
+                                            </button>
+                                        <?php else: ?>
+                                            <span class="osb-no-email" title="<?php _e('Student has no email address', 'spelling-bee-pro'); ?>">
+                                                <?php _e('No Email', 'spelling-bee-pro'); ?>
+                                            </span>
+                                        <?php endif; ?>
+                                    </span>
+                                <?php endif; ?>
                             </td>
 
                             <td class="column-registrations" data-colname="<?php _e('Registrations', 'spelling-bee-pro'); ?>">
@@ -356,6 +408,26 @@ $selected_school_id = intval($_GET['school_id'] ?? 0);
     color: #333;
 }
 
+/* Nigerian Grade System Colors */
+.osb-grade-primary-1, .osb-grade-primary-2, .osb-grade-primary-3,
+.osb-grade-primary-4, .osb-grade-primary-5, .osb-grade-primary-6 {
+    background: #e3f2fd;
+    color: #1976d2;
+    border: 1px solid #bbdefb;
+}
+
+.osb-grade-jss1, .osb-grade-jss2, .osb-grade-jss3 {
+    background: #f3e5f5;
+    color: #7b1fa2;
+    border: 1px solid #e1bee7;
+}
+
+.osb-grade-ss1, .osb-grade-ss2, .osb-grade-ss3 {
+    background: #fff3e0;
+    color: #f57c00;
+    border: 1px solid #ffcc02;
+}
+
 .osb-age {
     font-weight: 500;
 }
@@ -415,6 +487,80 @@ $selected_school_id = intval($_GET['school_id'] ?? 0);
 .osb-no-data {
     color: #999;
     font-style: italic;
+}
+
+/* WordPress User Column Styles */
+.osb-wp-user-info {
+    font-size: 0.9em;
+}
+
+.osb-wp-user-info strong a {
+    color: #0073aa;
+    text-decoration: none;
+}
+
+.osb-wp-user-info strong a:hover {
+    text-decoration: underline;
+}
+
+.osb-username {
+    color: #666;
+    font-family: monospace;
+    background: #f0f0f0;
+    padding: 1px 4px;
+    border-radius: 2px;
+}
+
+.osb-role-badge {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.75em;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.osb-role-student {
+    background: #2271b1;
+    color: white;
+}
+
+.osb-wp-user-error {
+    color: #d63638;
+    font-size: 0.9em;
+}
+
+.osb-create-wp-user {
+    font-size: 0.8em;
+    padding: 4px 8px;
+    height: auto;
+    line-height: 1.2;
+}
+
+.osb-create-wp-user .dashicons {
+    font-size: 12px;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+
+.osb-create-wp-user .dashicons.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.osb-no-email {
+    color: #999;
+    font-size: 0.9em;
+    font-style: italic;
+}
+
+.column-wordpress-user {
+    width: 140px;
 }
 
 .osb-no-students {
@@ -689,6 +835,43 @@ jQuery(document).ready(function($) {
     // Select all checkbox
     $('#cb-select-all-1').on('change', function() {
         $('input[name="student[]"]').prop('checked', $(this).is(':checked'));
+    });
+
+    // Create WordPress user for student
+    $('.osb-create-wp-user').on('click', function() {
+        const $button = $(this);
+        const studentId = $button.data('student-id');
+        const originalText = $button.html();
+
+        if (!confirm('<?php _e('Create WordPress user for this student?', 'spelling-bee-pro'); ?>')) {
+            return;
+        }
+
+        $button.prop('disabled', true).html('<span class="dashicons dashicons-update spin"></span> <?php _e('Creating...', 'spelling-bee-pro'); ?>');
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'osb_admin_action',
+                sub_action: 'create_student_wp_user',
+                student_id: studentId,
+                nonce: osb_ajax.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Reload the page to show the new user
+                    location.reload();
+                } else {
+                    alert('<?php _e('Error:', 'spelling-bee-pro'); ?> ' + response.data);
+                    $button.prop('disabled', false).html(originalText);
+                }
+            },
+            error: function() {
+                alert('<?php _e('Network error. Please try again.', 'spelling-bee-pro'); ?>');
+                $button.prop('disabled', false).html(originalText);
+            }
+        });
     });
 });
 </script>

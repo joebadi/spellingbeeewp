@@ -52,8 +52,8 @@ class OSB_File_Handler {
      */
     private function __construct() {
         $upload_dir = wp_upload_dir();
-        $this->upload_base_dir = trailingslashit($upload_dir['basedir']) . 'omafuru-spelling-bee/';
-        $this->upload_base_url = trailingslashit($upload_dir['baseurl']) . 'omafuru-spelling-bee/';
+        $this->upload_base_dir = trailingslashit($upload_dir['basedir']) . 'spelling-bee-pro/';
+        $this->upload_base_url = trailingslashit($upload_dir['baseurl']) . 'spelling-bee-pro/';
 
         $this->setupAllowedFileTypes();
         $this->setupMaxFileSizes();
@@ -106,13 +106,13 @@ class OSB_File_Handler {
     public function uploadFile($file_data, $type = 'documents', $subfolder = '', $custom_name = '') {
         // Validate file type
         if (!$this->isValidFileType($file_data['name'], $type)) {
-            return new WP_Error('invalid_file_type', __('Invalid file type for this upload category.', 'omafuru-spelling-bee'));
+            return new WP_Error('invalid_file_type', __('Invalid file type for this upload category.', 'spelling-bee-pro'));
         }
 
         // Validate file size
         if (!$this->isValidFileSize($file_data['size'], $type)) {
             return new WP_Error('file_too_large', sprintf(
-                __('File size exceeds the maximum limit of %s.', 'omafuru-spelling-bee'),
+                __('File size exceeds the maximum limit of %s.', 'spelling-bee-pro'),
                 size_format($this->max_file_sizes[$type])
             ));
         }
@@ -120,7 +120,7 @@ class OSB_File_Handler {
         // Setup upload directory
         $upload_dir = $this->getUploadDir($type, $subfolder);
         if (!$this->ensureDirectoryExists($upload_dir)) {
-            return new WP_Error('directory_error', __('Could not create upload directory.', 'omafuru-spelling-bee'));
+            return new WP_Error('directory_error', __('Could not create upload directory.', 'spelling-bee-pro'));
         }
 
         // Generate secure filename
@@ -129,7 +129,7 @@ class OSB_File_Handler {
 
         // Move uploaded file
         if (!move_uploaded_file($file_data['tmp_name'], $filepath)) {
-            return new WP_Error('upload_failed', __('Failed to upload file.', 'omafuru-spelling-bee'));
+            return new WP_Error('upload_failed', __('Failed to upload file.', 'spelling-bee-pro'));
         }
 
         // Set proper file permissions
@@ -156,12 +156,12 @@ class OSB_File_Handler {
     public function handleAjaxUpload() {
         // Verify nonce
         if (!wp_verify_nonce($_POST['nonce'], 'osb_upload_nonce')) {
-            wp_die(__('Security check failed.', 'omafuru-spelling-bee'));
+            wp_die(__('Security check failed.', 'spelling-bee-pro'));
         }
 
         // Check user permissions
         if (!current_user_can('upload_files')) {
-            wp_die(__('You do not have permission to upload files.', 'omafuru-spelling-bee'));
+            wp_die(__('You do not have permission to upload files.', 'spelling-bee-pro'));
         }
 
         $type = sanitize_text_field($_POST['type']);
@@ -169,7 +169,7 @@ class OSB_File_Handler {
         $custom_name = sanitize_text_field($_POST['custom_name']);
 
         if (empty($_FILES['file'])) {
-            wp_send_json_error(__('No file selected.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('No file selected.', 'spelling-bee-pro'));
         }
 
         $result = $this->uploadFile($_FILES['file'], $type, $subfolder, $custom_name);
@@ -187,11 +187,11 @@ class OSB_File_Handler {
     public function deleteFile($filepath) {
         // Security check - ensure file is within plugin directory
         if (strpos(realpath($filepath), realpath($this->upload_base_dir)) !== 0) {
-            return new WP_Error('security_error', __('Invalid file path.', 'omafuru-spelling-bee'));
+            return new WP_Error('security_error', __('Invalid file path.', 'spelling-bee-pro'));
         }
 
         if (!file_exists($filepath)) {
-            return new WP_Error('file_not_found', __('File not found.', 'omafuru-spelling-bee'));
+            return new WP_Error('file_not_found', __('File not found.', 'spelling-bee-pro'));
         }
 
         // Log file deletion
@@ -201,7 +201,7 @@ class OSB_File_Handler {
             return true;
         }
 
-        return new WP_Error('delete_failed', __('Failed to delete file.', 'omafuru-spelling-bee'));
+        return new WP_Error('delete_failed', __('Failed to delete file.', 'spelling-bee-pro'));
     }
 
     /**
@@ -210,12 +210,12 @@ class OSB_File_Handler {
     public function handleAjaxDelete() {
         // Verify nonce
         if (!wp_verify_nonce($_POST['nonce'], 'osb_delete_nonce')) {
-            wp_die(__('Security check failed.', 'omafuru-spelling-bee'));
+            wp_die(__('Security check failed.', 'spelling-bee-pro'));
         }
 
         // Check user permissions
         if (!current_user_can('delete_files')) {
-            wp_die(__('You do not have permission to delete files.', 'omafuru-spelling-bee'));
+            wp_die(__('You do not have permission to delete files.', 'spelling-bee-pro'));
         }
 
         $filepath = sanitize_text_field($_POST['filepath']);
@@ -225,7 +225,7 @@ class OSB_File_Handler {
             wp_send_json_error($result->get_error_message());
         }
 
-        wp_send_json_success(__('File deleted successfully.', 'omafuru-spelling-bee'));
+        wp_send_json_success(__('File deleted successfully.', 'spelling-bee-pro'));
     }
 
     /**
@@ -373,8 +373,14 @@ class OSB_File_Handler {
      * Log file action
      */
     private function logFileAction($action, $filepath, $user_id) {
+        // For now, we'll disable logging until we implement proper document tracking
+        // The current documents table is designed for file attachments, not action logging
+        return true;
+
+        // TODO: Create a separate file_actions table for logging if needed
+        /*
         global $wpdb;
-        $table_name = $wpdb->prefix . OSB_TABLE_PREFIX . 'documents';
+        $table_name = $wpdb->prefix . OSB_TABLE_PREFIX . 'file_actions';
 
         $data = array(
             'user_id' => $user_id,
@@ -385,6 +391,7 @@ class OSB_File_Handler {
         );
 
         $wpdb->insert($table_name, $data, array('%d', '%s', '%s', '%s', '%s'));
+        */
     }
 
     /**

@@ -91,6 +91,9 @@ $admin_menu = OSB_Admin_Menu::getInstance();
                         <th scope="col" class="manage-column column-students">
                             <?php _e('Students', 'spelling-bee-pro'); ?>
                         </th>
+                        <th scope="col" class="manage-column column-token">
+                            <?php _e('Token', 'spelling-bee-pro'); ?>
+                        </th>
                         <th scope="col" class="manage-column column-status">
                             <?php _e('Status', 'spelling-bee-pro'); ?>
                         </th>
@@ -170,15 +173,19 @@ $admin_menu = OSB_Admin_Menu::getInstance();
 
                             <td class="column-location" data-colname="<?php _e('Location', 'spelling-bee-pro'); ?>">
                                 <div class="osb-location-info">
-                                    <?php if (!empty($school->city)): ?>
-                                        <span class="osb-city"><?php echo esc_html($school->city); ?></span>
-                                        <?php if (!empty($school->state)): ?>
-                                            <span class="osb-state">, <?php echo esc_html($school->state); ?></span>
-                                        <?php endif; ?>
-                                        <br>
+                                    <?php if (!empty($school->address)): ?>
+                                        <div class="osb-address"><?php echo esc_html($school->address); ?></div>
                                     <?php endif; ?>
-                                    <?php if (!empty($school->country)): ?>
-                                        <span class="osb-country"><?php echo esc_html($school->country); ?></span>
+                                    <?php if (!empty($school->city) || !empty($school->state)): ?>
+                                        <div class="osb-city-state">
+                                            <?php if (!empty($school->city)): ?>
+                                                <span class="osb-city"><?php echo esc_html($school->city); ?></span>
+                                            <?php endif; ?>
+                                            <?php if (!empty($school->state)): ?>
+                                                <?php if (!empty($school->city)): ?>, <?php endif; ?>
+                                                <span class="osb-state"><?php echo esc_html($school->state); ?></span>
+                                            <?php endif; ?>
+                                        </div>
                                     <?php endif; ?>
                                 </div>
                             </td>
@@ -200,18 +207,58 @@ $admin_menu = OSB_Admin_Menu::getInstance();
                                 </span>
                             </td>
 
+                            <td class="column-token" data-colname="<?php _e('Token', 'spelling-bee-pro'); ?>">
+                                <?php
+                                // Get the latest registration token for this school
+                                global $wpdb;
+                                $latest_token = $wpdb->get_var(
+                                    $wpdb->prepare(
+                                        "SELECT registration_token FROM {$wpdb->prefix}osb_registrations
+                                         WHERE school_id = %d
+                                         ORDER BY created_at DESC LIMIT 1",
+                                        $school->id
+                                    )
+                                );
+                                ?>
+                                <?php if ($latest_token): ?>
+                                    <code class="osb-token" title="<?php echo esc_attr($latest_token); ?>">
+                                        <?php echo esc_html(substr($latest_token, 0, 8) . '...'); ?>
+                                    </code>
+                                    <button type="button" class="button button-small osb-copy-token"
+                                            data-token="<?php echo esc_attr($latest_token); ?>"
+                                            title="<?php _e('Copy full token', 'spelling-bee-pro'); ?>">
+                                        📋
+                                    </button>
+                                <?php else: ?>
+                                    <span class="osb-no-token">—</span>
+                                <?php endif; ?>
+                            </td>
+
                             <td class="column-status" data-colname="<?php _e('Status', 'spelling-bee-pro'); ?>">
-                                <span class="osb-status osb-status-<?php echo esc_attr($school->status); ?>">
-                                    <?php echo esc_html(ucfirst($school->status)); ?>
+                                <?php
+                                // Convert pending status to active for display logic
+                                $display_status = ($school->status === 'pending') ? 'active' : $school->status;
+                                $is_active = ($display_status === 'active');
+                                ?>
+                                <span class="osb-status osb-status-<?php echo esc_attr($display_status); ?>">
+                                    <?php echo esc_html(ucfirst($display_status)); ?>
                                 </span>
 
-                                <?php if ($school->status === 'pending'): ?>
-                                    <div class="osb-quick-actions">
-                                        <button type="button" class="button button-small osb-approve-school" data-school-id="<?php echo $school->id; ?>">
-                                            <?php _e('Approve', 'spelling-bee-pro'); ?>
+                                <div class="osb-quick-actions">
+                                    <?php if ($is_active): ?>
+                                        <button type="button" class="button button-small osb-deactivate-school"
+                                                data-school-id="<?php echo $school->id; ?>"
+                                                title="<?php _e('Deactivate this school', 'spelling-bee-pro'); ?>">
+                                            <?php _e('Deactivate', 'spelling-bee-pro'); ?>
                                         </button>
-                                    </div>
-                                <?php endif; ?>
+                                    <?php else: ?>
+                                        <button type="button" class="button button-small button-primary osb-activate-school"
+                                                data-school-id="<?php echo $school->id; ?>"
+                                                title="<?php _e('Activate this school', 'spelling-bee-pro'); ?>">
+                                            <?php _e('Activate', 'spelling-bee-pro'); ?>
+                                        </button>
+                                    <?php endif; ?>
+                                </div>
                             </td>
 
                             <td class="column-date" data-colname="<?php _e('Registered', 'spelling-bee-pro'); ?>">
@@ -373,6 +420,36 @@ $admin_menu = OSB_Admin_Menu::getInstance();
     height: auto;
     padding: 3px 8px;
     line-height: 1.4;
+}
+
+/* Token column styles */
+.osb-token {
+    background: #f1f1f1;
+    color: #666;
+    padding: 4px 6px;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 11px;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.osb-copy-token {
+    font-size: 10px;
+    padding: 2px 4px;
+    height: auto;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+.osb-copy-token.copied {
+    background: #00a32a;
+    color: white;
+}
+
+.osb-no-token {
+    color: #999;
+    font-style: italic;
 }
 
 .osb-no-schools {
@@ -661,6 +738,103 @@ jQuery(document).ready(function($) {
     // Select all checkbox
     $('#cb-select-all-1').on('change', function() {
         $('input[name="school[]"]').prop('checked', $(this).is(':checked'));
+    });
+
+    // Copy token functionality
+    $('.osb-copy-token').on('click', function() {
+        const token = $(this).data('token');
+        const $button = $(this);
+
+        // Copy to clipboard
+        navigator.clipboard.writeText(token).then(function() {
+            $button.text('✓').addClass('copied');
+            setTimeout(function() {
+                $button.text('📋').removeClass('copied');
+            }, 2000);
+        }).catch(function() {
+            // Fallback for older browsers
+            const textArea = document.createElement('textarea');
+            textArea.value = token;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+
+            $button.text('✓').addClass('copied');
+            setTimeout(function() {
+                $button.text('📋').removeClass('copied');
+            }, 2000);
+        });
+    });
+
+    // Activate school
+    $('.osb-activate-school').on('click', function() {
+        const schoolId = $(this).data('school-id');
+
+        if (!confirm('<?php _e('Are you sure you want to activate this school?', 'spelling-bee-pro'); ?>')) {
+            return;
+        }
+
+        const $button = $(this);
+        $button.prop('disabled', true).text('<?php _e('Activating...', 'spelling-bee-pro'); ?>');
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'osb_admin_action',
+                sub_action: 'activate_school',
+                school_id: schoolId,
+                nonce: osb_ajax.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    location.reload();
+                } else {
+                    alert('<?php _e('Error:', 'spelling-bee-pro'); ?> ' + response.data);
+                    $button.prop('disabled', false).text('<?php _e('Activate', 'spelling-bee-pro'); ?>');
+                }
+            },
+            error: function() {
+                alert('<?php _e('Network error. Please try again.', 'spelling-bee-pro'); ?>');
+                $button.prop('disabled', false).text('<?php _e('Activate', 'spelling-bee-pro'); ?>');
+            }
+        });
+    });
+
+    // Deactivate school
+    $('.osb-deactivate-school').on('click', function() {
+        const schoolId = $(this).data('school-id');
+
+        if (!confirm('<?php _e('Are you sure you want to deactivate this school?', 'spelling-bee-pro'); ?>')) {
+            return;
+        }
+
+        const $button = $(this);
+        $button.prop('disabled', true).text('<?php _e('Deactivating...', 'spelling-bee-pro'); ?>');
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'osb_admin_action',
+                sub_action: 'deactivate_school',
+                school_id: schoolId,
+                nonce: osb_ajax.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    location.reload();
+                } else {
+                    alert('<?php _e('Error:', 'spelling-bee-pro'); ?> ' + response.data);
+                    $button.prop('disabled', false).text('<?php _e('Deactivate', 'spelling-bee-pro'); ?>');
+                }
+            },
+            error: function() {
+                alert('<?php _e('Network error. Please try again.', 'spelling-bee-pro'); ?>');
+                $button.prop('disabled', false).text('<?php _e('Deactivate', 'spelling-bee-pro'); ?>');
+            }
+        });
     });
 });
 </script>

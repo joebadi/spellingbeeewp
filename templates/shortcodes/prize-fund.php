@@ -47,7 +47,7 @@ $progress_percentage = ($current_total / $goal_amount) * 100;
 
         <div class="donation-section">
             <h3 style="text-align: center; margin-bottom: 1rem;">Add to Prize Pot</h3>
-            <p style="text-align: center; margin-bottom: 1rem; color: #667eea; font-weight: 600;">Empower young minds and reward excellence in education across Nigeria</p>
+            <p style="text-align: center; margin-bottom: 1rem; color: #0052cc; font-weight: 600;">Empower young minds and reward excellence in education across Nigeria</p>
             <p style="text-align: center; margin-bottom: 1rem;">Current: ₦<?php echo number_format($current_total); ?> | Goal: ₦<?php echo number_format($goal_amount); ?></p>
             <div class="donation-progress">
                 <div class="progress-bar" style="width: <?php echo $progress_percentage; ?>%;"></div>
@@ -162,7 +162,7 @@ $progress_percentage = ($current_total / $goal_amount) * 100;
 }
 
 .progress-bar {
-    background: linear-gradient(90deg, #667eea, #764ba2);
+    background: linear-gradient(90deg, #0052cc, #003d99);
     height: 100%;
     border-radius: 10px;
     transition: width 0.3s ease;
@@ -178,7 +178,7 @@ $progress_percentage = ($current_total / $goal_amount) * 100;
 }
 
 .donation-btn {
-    background: #667eea;
+    background: #0052cc;
     color: white;
     padding: 10px 20px;
     border: none;
@@ -190,9 +190,9 @@ $progress_percentage = ($current_total / $goal_amount) * 100;
 }
 
 .donation-btn:hover {
-    background: #764ba2;
+    background: #003d99;
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 5px 15px rgba(0, 82, 204, 0.3);
 }
 
 /* Responsive Design */

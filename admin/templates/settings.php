@@ -9,8 +9,8 @@ if (!defined('ABSPATH')) {
 }
 
 // Get current settings
-$organization_name = get_option('osb_organization_name', 'Omafuru Foundation');
-$contact_email = get_option('osb_contact_email', 'info@omafarufoundation.org');
+$organization_name = get_option('osb_organization_name', 'Spelling Bee Organization');
+$contact_email = get_option('osb_contact_email', get_option('admin_email'));
 $registration_enabled = get_option('osb_registration_enabled', '1');
 $max_students_per_school = get_option('osb_max_students_per_school', '5');
 $min_students_per_school = get_option('osb_min_students_per_school', '3');
@@ -299,6 +299,56 @@ settings_errors('osb_settings');
                                 <input type="checkbox" name="osb_donation_enabled" value="1" <?php checked($donation_enabled, '1'); ?> />
                                 <?php _e('Allow donations to support the competition', 'spelling-bee-pro'); ?>
                             </label>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Security Settings -->
+            <div class="osb-settings-section">
+                <h2 class="osb-section-title">
+                    <span class="dashicons dashicons-shield"></span>
+                    Security Settings
+                </h2>
+
+                <table class="form-table">
+                    <tr>
+                        <th scope="row">
+                            <label for="osb_recaptcha_site_key"><?php _e('Google reCAPTCHA Site Key', 'spelling-bee-pro'); ?></label>
+                        </th>
+                        <td>
+                            <input type="text" id="osb_recaptcha_site_key" name="osb_recaptcha_site_key"
+                                   value="<?php echo esc_attr(get_option('osb_recaptcha_site_key', '')); ?>" class="regular-text" />
+                            <p class="description">
+                                <?php _e('Get your reCAPTCHA keys from', 'spelling-bee-pro'); ?>
+                                <a href="https://www.google.com/recaptcha/admin/create" target="_blank">Google reCAPTCHA Admin Console</a>
+                            </p>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th scope="row">
+                            <label for="osb_recaptcha_secret_key"><?php _e('Google reCAPTCHA Secret Key', 'spelling-bee-pro'); ?></label>
+                        </th>
+                        <td>
+                            <input type="password" id="osb_recaptcha_secret_key" name="osb_recaptcha_secret_key"
+                                   value="<?php echo esc_attr(get_option('osb_recaptcha_secret_key', '')); ?>" class="regular-text" />
+                            <button type="button" class="button" id="toggle-recaptcha-secret">
+                                <span class="dashicons dashicons-visibility"></span>
+                                <?php _e('Show', 'spelling-bee-pro'); ?>
+                            </button>
+                            <p class="description"><?php _e('This key is used for server-side verification. Keep it secure!', 'spelling-bee-pro'); ?></p>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th scope="row"><?php _e('Enable reCAPTCHA', 'spelling-bee-pro'); ?></th>
+                        <td>
+                            <label>
+                                <input type="checkbox" name="osb_recaptcha_enabled" value="1" <?php checked(get_option('osb_recaptcha_enabled', '1'), '1'); ?> />
+                                <?php _e('Enable Google reCAPTCHA on registration forms', 'spelling-bee-pro'); ?>
+                            </label>
+                            <p class="description"><?php _e('Helps prevent spam and automated registrations.', 'spelling-bee-pro'); ?></p>
                         </td>
                     </tr>
                 </table>
@@ -852,6 +902,22 @@ jQuery(document).ready(function($) {
                 }
             }
         });
+    });
+
+    // Toggle reCAPTCHA secret key visibility
+    $('#toggle-recaptcha-secret').on('click', function() {
+        const $input = $('#osb_recaptcha_secret_key');
+        const $button = $(this);
+
+        if ($input.attr('type') === 'password') {
+            $input.attr('type', 'text');
+            $button.find('.dashicons').removeClass('dashicons-visibility').addClass('dashicons-hidden');
+            $button.find('span:not(.dashicons)').text('<?php _e('Hide', 'spelling-bee-pro'); ?>');
+        } else {
+            $input.attr('type', 'password');
+            $button.find('.dashicons').removeClass('dashicons-hidden').addClass('dashicons-visibility');
+            $button.find('span:not(.dashicons)').text('<?php _e('Show', 'spelling-bee-pro'); ?>');
+        }
     });
 
     // Initialize total calculation

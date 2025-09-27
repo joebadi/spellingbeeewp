@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 }
 
 $is_edit = !empty($event);
-$page_title = $is_edit ? __('Edit Event', 'omafuru-spelling-bee') : __('Add New Event', 'omafuru-spelling-bee');
+$page_title = $is_edit ? __('Edit Event', 'spelling-bee-pro') : __('Add New Event', 'spelling-bee-pro');
 ?>
 
 <div class="wrap">
@@ -19,7 +19,7 @@ $page_title = $is_edit ? __('Edit Event', 'omafuru-spelling-bee') : __('Add New 
 
     <?php if (isset($_GET['saved'])): ?>
         <div class="notice notice-success is-dismissible">
-            <p><?php _e('Event saved successfully.', 'omafuru-spelling-bee'); ?></p>
+            <p><?php _e('Event saved successfully.', 'spelling-bee-pro'); ?></p>
         </div>
     <?php endif; ?>
 
@@ -33,12 +33,12 @@ $page_title = $is_edit ? __('Edit Event', 'omafuru-spelling-bee') : __('Add New 
             <div class="osb-form-main">
                 <!-- Basic Information -->
                 <div class="osb-form-section">
-                    <h2><?php _e('Basic Information', 'omafuru-spelling-bee'); ?></h2>
+                    <h2><?php _e('Basic Information', 'spelling-bee-pro'); ?></h2>
 
                     <table class="form-table">
                         <tr>
                             <th scope="row">
-                                <label for="event-title"><?php _e('Event Title', 'omafuru-spelling-bee'); ?> <span class="required">*</span></label>
+                                <label for="event-title"><?php _e('Event Title', 'spelling-bee-pro'); ?> <span class="required">*</span></label>
                             </th>
                             <td>
                                 <input type="text"
@@ -47,13 +47,13 @@ $page_title = $is_edit ? __('Edit Event', 'omafuru-spelling-bee') : __('Add New 
                                        value="<?php echo $is_edit ? esc_attr($event->title) : ''; ?>"
                                        class="regular-text"
                                        required>
-                                <p class="description"><?php _e('Enter the name of your spelling bee event.', 'omafuru-spelling-bee'); ?></p>
+                                <p class="description"><?php _e('Enter the name of your spelling bee event.', 'spelling-bee-pro'); ?></p>
                             </td>
                         </tr>
 
                         <tr>
                             <th scope="row">
-                                <label for="event-description"><?php _e('Description', 'omafuru-spelling-bee'); ?></label>
+                                <label for="event-description"><?php _e('Description', 'spelling-bee-pro'); ?></label>
                             </th>
                             <td>
                                 <textarea id="event-description"
@@ -61,13 +61,13 @@ $page_title = $is_edit ? __('Edit Event', 'omafuru-spelling-bee') : __('Add New 
                                           rows="5"
                                           cols="50"
                                           class="large-text"><?php echo $is_edit ? esc_textarea($event->description) : ''; ?></textarea>
-                                <p class="description"><?php _e('Provide a detailed description of the event.', 'omafuru-spelling-bee'); ?></p>
+                                <p class="description"><?php _e('Provide a detailed description of the event.', 'spelling-bee-pro'); ?></p>
                             </td>
                         </tr>
 
                         <tr>
                             <th scope="row">
-                                <label for="event-year"><?php _e('Event Year', 'omafuru-spelling-bee'); ?> <span class="required">*</span></label>
+                                <label for="event-year"><?php _e('Event Year', 'spelling-bee-pro'); ?> <span class="required">*</span></label>
                             </th>
                             <td>
                                 <input type="number"
@@ -78,30 +78,30 @@ $page_title = $is_edit ? __('Edit Event', 'omafuru-spelling-bee') : __('Add New 
                                        max="<?php echo date('Y') + 10; ?>"
                                        class="small-text"
                                        required>
-                                <p class="description"><?php _e('The year this competition will take place.', 'omafuru-spelling-bee'); ?></p>
+                                <p class="description"><?php _e('The year this competition will take place.', 'spelling-bee-pro'); ?></p>
                             </td>
                         </tr>
 
                         <tr>
                             <th scope="row">
-                                <label for="event-status"><?php _e('Status', 'omafuru-spelling-bee'); ?></label>
+                                <label for="event-status"><?php _e('Status', 'spelling-bee-pro'); ?></label>
                             </th>
                             <td>
                                 <select id="event-status" name="status" class="regular-text">
                                     <option value="upcoming" <?php echo ($is_edit && $event->status === 'upcoming') ? 'selected' : ''; ?>>
-                                        <?php _e('Upcoming', 'omafuru-spelling-bee'); ?>
+                                        <?php _e('Upcoming', 'spelling-bee-pro'); ?>
                                     </option>
                                     <option value="live" <?php echo ($is_edit && $event->status === 'live') ? 'selected' : ''; ?>>
-                                        <?php _e('Live', 'omafuru-spelling-bee'); ?>
+                                        <?php _e('Live', 'spelling-bee-pro'); ?>
                                     </option>
                                     <option value="completed" <?php echo ($is_edit && $event->status === 'completed') ? 'selected' : ''; ?>>
-                                        <?php _e('Completed', 'omafuru-spelling-bee'); ?>
+                                        <?php _e('Completed', 'spelling-bee-pro'); ?>
                                     </option>
                                     <option value="cancelled" <?php echo ($is_edit && $event->status === 'cancelled') ? 'selected' : ''; ?>>
-                                        <?php _e('Cancelled', 'omafuru-spelling-bee'); ?>
+                                        <?php _e('Cancelled', 'spelling-bee-pro'); ?>
                                     </option>
                                 </select>
-                                <p class="description"><?php _e('Current status of the event.', 'omafuru-spelling-bee'); ?></p>
+                                <p class="description"><?php _e('Current status of the event.', 'spelling-bee-pro'); ?></p>
                             </td>
                         </tr>
                     </table>
@@ -109,12 +109,12 @@ $page_title = $is_edit ? __('Edit Event', 'omafuru-spelling-bee') : __('Add New 
 
                 <!-- Date and Time -->
                 <div class="osb-form-section">
-                    <h2><?php _e('Date & Time', 'omafuru-spelling-bee'); ?></h2>
+                    <h2><?php _e('Date & Time', 'spelling-bee-pro'); ?></h2>
 
                     <table class="form-table">
                         <tr>
                             <th scope="row">
-                                <label for="event-date"><?php _e('Event Date', 'omafuru-spelling-bee'); ?> <span class="required">*</span></label>
+                                <label for="event-date"><?php _e('Event Date', 'spelling-bee-pro'); ?> <span class="required">*</span></label>
                             </th>
                             <td>
                                 <input type="date"
@@ -123,13 +123,13 @@ $page_title = $is_edit ? __('Edit Event', 'omafuru-spelling-bee') : __('Add New 
                                        value="<?php echo $is_edit ? esc_attr($event->event_date) : ''; ?>"
                                        class="regular-text"
                                        required>
-                                <p class="description"><?php _e('The date when the competition will be held.', 'omafuru-spelling-bee'); ?></p>
+                                <p class="description"><?php _e('The date when the competition will be held.', 'spelling-bee-pro'); ?></p>
                             </td>
                         </tr>
 
                         <tr>
                             <th scope="row">
-                                <label for="event-time"><?php _e('Event Time', 'omafuru-spelling-bee'); ?></label>
+                                <label for="event-time"><?php _e('Event Time', 'spelling-bee-pro'); ?></label>
                             </th>
                             <td>
                                 <input type="time"
@@ -137,13 +137,13 @@ $page_title = $is_edit ? __('Edit Event', 'omafuru-spelling-bee') : __('Add New 
                                        name="event_time"
                                        value="<?php echo $is_edit ? esc_attr($event->event_time) : ''; ?>"
                                        class="regular-text">
-                                <p class="description"><?php _e('The time when the competition will start.', 'omafuru-spelling-bee'); ?></p>
+                                <p class="description"><?php _e('The time when the competition will start.', 'spelling-bee-pro'); ?></p>
                             </td>
                         </tr>
 
                         <tr>
                             <th scope="row">
-                                <label for="registration-deadline"><?php _e('Registration Deadline', 'omafuru-spelling-bee'); ?></label>
+                                <label for="registration-deadline"><?php _e('Registration Deadline', 'spelling-bee-pro'); ?></label>
                             </th>
                             <td>
                                 <input type="date"
@@ -151,7 +151,7 @@ $page_title = $is_edit ? __('Edit Event', 'omafuru-spelling-bee') : __('Add New 
                                        name="registration_deadline"
                                        value="<?php echo $is_edit ? esc_attr($event->registration_deadline) : ''; ?>"
                                        class="regular-text">
-                                <p class="description"><?php _e('Last date for school registrations.', 'omafuru-spelling-bee'); ?></p>
+                                <p class="description"><?php _e('Last date for school registrations.', 'spelling-bee-pro'); ?></p>
                             </td>
                         </tr>
                     </table>
@@ -159,12 +159,12 @@ $page_title = $is_edit ? __('Edit Event', 'omafuru-spelling-bee') : __('Add New 
 
                 <!-- Venue Information -->
                 <div class="osb-form-section">
-                    <h2><?php _e('Venue Information', 'omafuru-spelling-bee'); ?></h2>
+                    <h2><?php _e('Venue Information', 'spelling-bee-pro'); ?></h2>
 
                     <table class="form-table">
                         <tr>
                             <th scope="row">
-                                <label for="venue-name"><?php _e('Venue Name', 'omafuru-spelling-bee'); ?></label>
+                                <label for="venue-name"><?php _e('Venue Name', 'spelling-bee-pro'); ?></label>
                             </th>
                             <td>
                                 <input type="text"
@@ -172,13 +172,13 @@ $page_title = $is_edit ? __('Edit Event', 'omafuru-spelling-bee') : __('Add New 
                                        name="venue_name"
                                        value="<?php echo $is_edit ? esc_attr($event->venue_name) : ''; ?>"
                                        class="regular-text">
-                                <p class="description"><?php _e('Name of the venue where the competition will be held.', 'omafuru-spelling-bee'); ?></p>
+                                <p class="description"><?php _e('Name of the venue where the competition will be held.', 'spelling-bee-pro'); ?></p>
                             </td>
                         </tr>
 
                         <tr>
                             <th scope="row">
-                                <label for="venue-address"><?php _e('Venue Address', 'omafuru-spelling-bee'); ?></label>
+                                <label for="venue-address"><?php _e('Venue Address', 'spelling-bee-pro'); ?></label>
                             </th>
                             <td>
                                 <textarea id="venue-address"
@@ -186,7 +186,7 @@ $page_title = $is_edit ? __('Edit Event', 'omafuru-spelling-bee') : __('Add New 
                                           rows="4"
                                           cols="50"
                                           class="large-text"><?php echo $is_edit ? esc_textarea($event->venue_address) : ''; ?></textarea>
-                                <p class="description"><?php _e('Full address of the venue.', 'omafuru-spelling-bee'); ?></p>
+                                <p class="description"><?php _e('Full address of the venue.', 'spelling-bee-pro'); ?></p>
                             </td>
                         </tr>
                     </table>
@@ -194,12 +194,28 @@ $page_title = $is_edit ? __('Edit Event', 'omafuru-spelling-bee') : __('Add New 
 
                 <!-- Competition Settings -->
                 <div class="osb-form-section">
-                    <h2><?php _e('Competition Settings', 'omafuru-spelling-bee'); ?></h2>
+                    <h2><?php _e('Competition Settings', 'spelling-bee-pro'); ?></h2>
 
                     <table class="form-table">
                         <tr>
                             <th scope="row">
-                                <label for="max-students"><?php _e('Max Students per School', 'omafuru-spelling-bee'); ?></label>
+                                <label for="min-students"><?php _e('Min Students per School', 'spelling-bee-pro'); ?></label>
+                            </th>
+                            <td>
+                                <input type="number"
+                                       id="min-students"
+                                       name="min_students_per_school"
+                                       value="<?php echo $is_edit ? intval($event->min_students_per_school ?? 3) : 3; ?>"
+                                       min="1"
+                                       max="10"
+                                       class="small-text">
+                                <p class="description"><?php _e('Minimum number of students each school must register to participate.', 'spelling-bee-pro'); ?></p>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th scope="row">
+                                <label for="max-students"><?php _e('Max Students per School', 'spelling-bee-pro'); ?></label>
                             </th>
                             <td>
                                 <input type="number"
@@ -209,13 +225,13 @@ $page_title = $is_edit ? __('Edit Event', 'omafuru-spelling-bee') : __('Add New 
                                        min="1"
                                        max="20"
                                        class="small-text">
-                                <p class="description"><?php _e('Maximum number of students each school can register.', 'omafuru-spelling-bee'); ?></p>
+                                <p class="description"><?php _e('Maximum number of students each school can register.', 'spelling-bee-pro'); ?></p>
                             </td>
                         </tr>
 
                         <tr>
                             <th scope="row">
-                                <label for="prize-fund-goal"><?php _e('Prize Fund Goal', 'omafuru-spelling-bee'); ?></label>
+                                <label for="prize-fund-goal"><?php _e('Prize Fund Goal', 'spelling-bee-pro'); ?></label>
                             </th>
                             <td>
                                 <input type="number"
@@ -225,7 +241,7 @@ $page_title = $is_edit ? __('Edit Event', 'omafuru-spelling-bee') : __('Add New 
                                        step="0.01"
                                        min="0"
                                        class="regular-text">
-                                <p class="description"><?php _e('Target amount for the prize fund (optional).', 'omafuru-spelling-bee'); ?></p>
+                                <p class="description"><?php _e('Target amount for the prize fund (optional).', 'spelling-bee-pro'); ?></p>
                             </td>
                         </tr>
                     </table>
@@ -235,13 +251,13 @@ $page_title = $is_edit ? __('Edit Event', 'omafuru-spelling-bee') : __('Add New 
             <div class="osb-form-sidebar">
                 <!-- Event Flyer -->
                 <div class="osb-form-section">
-                    <h3><?php _e('Event Flyer', 'omafuru-spelling-bee'); ?></h3>
+                    <h3><?php _e('Event Flyer', 'spelling-bee-pro'); ?></h3>
 
                     <div id="osb-flyer-preview">
                         <?php if ($is_edit && !empty($event->flyer_url)): ?>
                             <div class="osb-current-flyer">
                                 <img src="<?php echo esc_url($event->flyer_url); ?>" alt="Current Flyer" style="max-width: 100%; height: auto;">
-                                <p><strong><?php _e('Current Flyer', 'omafuru-spelling-bee'); ?></strong></p>
+                                <p><strong><?php _e('Current Flyer', 'spelling-bee-pro'); ?></strong></p>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -252,23 +268,23 @@ $page_title = $is_edit ? __('Edit Event', 'omafuru-spelling-bee') : __('Add New 
                                name="flyer_url"
                                value="<?php echo $is_edit ? esc_url($event->flyer_url) : ''; ?>"
                                class="widefat"
-                               placeholder="<?php _e('Enter flyer image URL or upload below', 'omafuru-spelling-bee'); ?>">
+                               placeholder="<?php _e('Enter flyer image URL or upload below', 'spelling-bee-pro'); ?>">
                     </p>
 
                     <p>
                         <button type="button" id="upload-flyer-btn" class="button button-secondary">
-                            <?php _e('Upload Flyer', 'omafuru-spelling-bee'); ?>
+                            <?php _e('Upload Flyer', 'spelling-bee-pro'); ?>
                         </button>
                     </p>
 
                     <p class="description">
-                        <?php _e('Upload or provide URL for the event flyer image. Recommended size: 800x600 pixels.', 'omafuru-spelling-bee'); ?>
+                        <?php _e('Upload or provide URL for the event flyer image. Recommended size: 800x600 pixels.', 'spelling-bee-pro'); ?>
                     </p>
                 </div>
 
                 <!-- Video Management -->
                 <div class="osb-form-section">
-                    <h3><?php _e('Video Management', 'omafuru-spelling-bee'); ?></h3>
+                    <h3><?php _e('Video Management', 'spelling-bee-pro'); ?></h3>
 
                     <?php if ($is_edit): ?>
                         <div id="osb-video-list">
@@ -318,7 +334,7 @@ $page_title = $is_edit ? __('Edit Event', 'omafuru-spelling-bee') : __('Add New 
                                         <div class="osb-video-info">
                                             <strong><?php echo esc_html($video->title); ?></strong><br>
                                             <small><?php echo esc_html(ucfirst(str_replace('_', ' ', $video->video_type))); ?> -
-                                                <?php echo $video->is_active ? __('Active', 'omafuru-spelling-bee') : __('Inactive', 'omafuru-spelling-bee'); ?>
+                                                <?php echo $video->is_active ? __('Active', 'spelling-bee-pro') : __('Inactive', 'spelling-bee-pro'); ?>
                                             </small>
                                             <?php if (!empty($video->youtube_url)): ?>
                                                 <br><small><a href="<?php echo esc_url($video->youtube_url); ?>" target="_blank">View on YouTube</a></small>
@@ -326,53 +342,53 @@ $page_title = $is_edit ? __('Edit Event', 'omafuru-spelling-bee') : __('Add New 
                                         </div>
                                         <div class="osb-video-actions">
                                             <button type="button" class="button button-small osb-edit-video" data-video-id="<?php echo $video->id; ?>">
-                                                <?php _e('Edit', 'omafuru-spelling-bee'); ?>
+                                                <?php _e('Edit', 'spelling-bee-pro'); ?>
                                             </button>
                                             <button type="button" class="button button-small osb-delete-video" data-video-id="<?php echo $video->id; ?>">
-                                                <?php _e('Delete', 'omafuru-spelling-bee'); ?>
+                                                <?php _e('Delete', 'spelling-bee-pro'); ?>
                                             </button>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
                             <?php else: ?>
-                                <p><?php _e('No video added yet.', 'omafuru-spelling-bee'); ?></p>
+                                <p><?php _e('No video added yet.', 'spelling-bee-pro'); ?></p>
                             <?php endif; ?>
                         </div>
 
                         <?php if (empty($videos)): ?>
                             <button type="button" id="add-video-btn" class="button button-secondary">
-                                <?php _e('Add Video', 'omafuru-spelling-bee'); ?>
+                                <?php _e('Add Video', 'spelling-bee-pro'); ?>
                             </button>
                         <?php else: ?>
                             <p class="description">
-                                <?php _e('Only one video per event is allowed. Delete the current video to add a new one.', 'omafuru-spelling-bee'); ?>
+                                <?php _e('Only one video per event is allowed. Delete the current video to add a new one.', 'spelling-bee-pro'); ?>
                             </p>
                         <?php endif; ?>
                     <?php else: ?>
                         <p class="description">
-                            <?php _e('Video management will be available after saving the event.', 'omafuru-spelling-bee'); ?>
+                            <?php _e('Video management will be available after saving the event.', 'spelling-bee-pro'); ?>
                         </p>
                     <?php endif; ?>
                 </div>
 
                 <!-- Save Actions -->
                 <div class="osb-form-section">
-                    <h3><?php _e('Actions', 'omafuru-spelling-bee'); ?></h3>
+                    <h3><?php _e('Actions', 'spelling-bee-pro'); ?></h3>
 
                     <div class="osb-save-actions">
                         <p>
                             <input type="submit" name="save" id="save-event" class="button button-primary button-large"
-                                   value="<?php echo $is_edit ? __('Update Event', 'omafuru-spelling-bee') : __('Create Event', 'omafuru-spelling-bee'); ?>">
+                                   value="<?php echo $is_edit ? __('Update Event', 'spelling-bee-pro') : __('Create Event', 'spelling-bee-pro'); ?>">
                         </p>
 
                         <p>
                             <input type="submit" name="save_and_continue" id="save-and-continue" class="button button-secondary"
-                                   value="<?php _e('Save & Continue Editing', 'omafuru-spelling-bee'); ?>">
+                                   value="<?php _e('Save & Continue Editing', 'spelling-bee-pro'); ?>">
                         </p>
 
                         <p>
                             <a href="<?php echo admin_url('admin.php?page=spelling-bee-events'); ?>" class="button">
-                                <?php _e('Cancel', 'omafuru-spelling-bee'); ?>
+                                <?php _e('Cancel', 'spelling-bee-pro'); ?>
                             </a>
                         </p>
 
@@ -381,14 +397,14 @@ $page_title = $is_edit ? __('Edit Event', 'omafuru-spelling-bee') : __('Add New 
                         <p>
                             <a href="<?php echo admin_url('admin.php?page=spelling-bee-registrations&event_id=' . $event->id); ?>"
                                class="button">
-                                <?php _e('View Registrations', 'omafuru-spelling-bee'); ?>
+                                <?php _e('View Registrations', 'spelling-bee-pro'); ?>
                             </a>
                         </p>
 
                         <p>
                             <a href="<?php echo admin_url('admin.php?page=spelling-bee-donations&event_id=' . $event->id); ?>"
                                class="button">
-                                <?php _e('View Donations', 'omafuru-spelling-bee'); ?>
+                                <?php _e('View Donations', 'spelling-bee-pro'); ?>
                             </a>
                         </p>
                         <?php endif; ?>
@@ -403,7 +419,7 @@ $page_title = $is_edit ? __('Edit Event', 'omafuru-spelling-bee') : __('Add New 
 <div id="osb-video-modal" class="osb-modal" style="display: none;">
     <div class="osb-modal-content">
         <div class="osb-modal-header">
-            <h3 id="osb-video-modal-title"><?php _e('Add Video', 'omafuru-spelling-bee'); ?></h3>
+            <h3 id="osb-video-modal-title"><?php _e('Add Video', 'spelling-bee-pro'); ?></h3>
             <button type="button" class="osb-modal-close">&times;</button>
         </div>
         <div class="osb-modal-body">
@@ -414,7 +430,7 @@ $page_title = $is_edit ? __('Edit Event', 'omafuru-spelling-bee') : __('Add New 
                 <table class="form-table">
                     <tr>
                         <th scope="row">
-                            <label for="video-title"><?php _e('Video Title', 'omafuru-spelling-bee'); ?></label>
+                            <label for="video-title"><?php _e('Video Title', 'spelling-bee-pro'); ?></label>
                         </th>
                         <td>
                             <input type="text" id="video-title" name="video_title" class="widefat" required>
@@ -423,31 +439,31 @@ $page_title = $is_edit ? __('Edit Event', 'omafuru-spelling-bee') : __('Add New 
 
                     <tr>
                         <th scope="row">
-                            <label for="video-type"><?php _e('Video Type', 'omafuru-spelling-bee'); ?></label>
+                            <label for="video-type"><?php _e('Video Type', 'spelling-bee-pro'); ?></label>
                         </th>
                         <td>
                             <select id="video-type" name="video_type" class="widefat">
-                                <option value="flyer"><?php _e('Flyer/Promotional', 'omafuru-spelling-bee'); ?></option>
-                                <option value="live"><?php _e('Live Stream', 'omafuru-spelling-bee'); ?></option>
-                                <option value="highlight"><?php _e('Highlights', 'omafuru-spelling-bee'); ?></option>
-                                <option value="recap"><?php _e('Event Recap', 'omafuru-spelling-bee'); ?></option>
+                                <option value="flyer"><?php _e('Flyer/Promotional', 'spelling-bee-pro'); ?></option>
+                                <option value="live"><?php _e('Live Stream', 'spelling-bee-pro'); ?></option>
+                                <option value="highlight"><?php _e('Highlights', 'spelling-bee-pro'); ?></option>
+                                <option value="recap"><?php _e('Event Recap', 'spelling-bee-pro'); ?></option>
                             </select>
                         </td>
                     </tr>
 
                     <tr>
                         <th scope="row">
-                            <label for="video-url"><?php _e('Video URL', 'omafuru-spelling-bee'); ?></label>
+                            <label for="video-url"><?php _e('Video URL', 'spelling-bee-pro'); ?></label>
                         </th>
                         <td>
                             <input type="url" id="video-url" name="video_url" class="widefat" required>
-                            <p class="description"><?php _e('YouTube, Vimeo, or direct video URL.', 'omafuru-spelling-bee'); ?></p>
+                            <p class="description"><?php _e('YouTube, Vimeo, or direct video URL.', 'spelling-bee-pro'); ?></p>
                         </td>
                     </tr>
 
                     <tr>
                         <th scope="row">
-                            <label for="video-description"><?php _e('Description', 'omafuru-spelling-bee'); ?></label>
+                            <label for="video-description"><?php _e('Description', 'spelling-bee-pro'); ?></label>
                         </th>
                         <td>
                             <textarea id="video-description" name="video_description" rows="3" class="widefat"></textarea>
@@ -456,12 +472,12 @@ $page_title = $is_edit ? __('Edit Event', 'omafuru-spelling-bee') : __('Add New 
 
                     <tr>
                         <th scope="row">
-                            <label for="video-active"><?php _e('Status', 'omafuru-spelling-bee'); ?></label>
+                            <label for="video-active"><?php _e('Status', 'spelling-bee-pro'); ?></label>
                         </th>
                         <td>
                             <label>
                                 <input type="checkbox" id="video-active" name="is_active" value="1" checked>
-                                <?php _e('Active (visible to public)', 'omafuru-spelling-bee'); ?>
+                                <?php _e('Active (visible to public)', 'spelling-bee-pro'); ?>
                             </label>
                         </td>
                     </tr>
@@ -470,10 +486,10 @@ $page_title = $is_edit ? __('Edit Event', 'omafuru-spelling-bee') : __('Add New 
         </div>
         <div class="osb-modal-footer">
             <button type="button" id="save-video-btn" class="button button-primary">
-                <?php _e('Save Video', 'omafuru-spelling-bee'); ?>
+                <?php _e('Save Video', 'spelling-bee-pro'); ?>
             </button>
             <button type="button" class="button osb-modal-close">
-                <?php _e('Cancel', 'omafuru-spelling-bee'); ?>
+                <?php _e('Cancel', 'spelling-bee-pro'); ?>
             </button>
         </div>
     </div>
@@ -711,9 +727,9 @@ jQuery(document).ready(function($) {
         }
 
         flyerFrame = wp.media({
-            title: '<?php _e('Select Event Flyer', 'omafuru-spelling-bee'); ?>',
+            title: '<?php _e('Select Event Flyer', 'spelling-bee-pro'); ?>',
             button: {
-                text: '<?php _e('Use this image', 'omafuru-spelling-bee'); ?>'
+                text: '<?php _e('Use this image', 'spelling-bee-pro'); ?>'
             },
             multiple: false,
             library: {
@@ -728,7 +744,7 @@ jQuery(document).ready(function($) {
             $('#osb-flyer-preview').html(
                 '<div class="osb-current-flyer">' +
                 '<img src="' + attachment.url + '" alt="Selected Flyer" style="max-width: 100%; height: auto;">' +
-                '<p><strong><?php _e('Selected Flyer', 'omafuru-spelling-bee'); ?></strong></p>' +
+                '<p><strong><?php _e('Selected Flyer', 'spelling-bee-pro'); ?></strong></p>' +
                 '</div>'
             );
         });
@@ -738,7 +754,7 @@ jQuery(document).ready(function($) {
 
     // Video management
     $('#add-video-btn').on('click', function() {
-        $('#osb-video-modal-title').text('<?php _e('Add Video', 'omafuru-spelling-bee'); ?>');
+        $('#osb-video-modal-title').text('<?php _e('Add Video', 'spelling-bee-pro'); ?>');
         $('#osb-video-form')[0].reset();
         $('#video-id').val('');
         $('#osb-video-modal').show();
@@ -761,7 +777,7 @@ jQuery(document).ready(function($) {
                 if (response.success) {
                     const video = response.data;
 
-                    $('#osb-video-modal-title').text('<?php _e('Edit Video', 'omafuru-spelling-bee'); ?>');
+                    $('#osb-video-modal-title').text('<?php _e('Edit Video', 'spelling-bee-pro'); ?>');
                     $('#video-id').val(video.id);
                     $('#video-title').val(video.video_title);
                     $('#video-type').val(video.video_type);
@@ -781,7 +797,7 @@ jQuery(document).ready(function($) {
     });
 
     $('.osb-delete-video').on('click', function() {
-        if (!confirm('<?php _e('Are you sure you want to delete this video?', 'omafuru-spelling-bee'); ?>')) {
+        if (!confirm('<?php _e('Are you sure you want to delete this video?', 'spelling-bee-pro'); ?>')) {
             return;
         }
 
@@ -875,7 +891,7 @@ jQuery(document).ready(function($) {
         });
 
         if (!isValid) {
-            alert('<?php _e('Please fill in all required fields.', 'omafuru-spelling-bee'); ?>');
+            alert('<?php _e('Please fill in all required fields.', 'spelling-bee-pro'); ?>');
             e.preventDefault();
         }
     });

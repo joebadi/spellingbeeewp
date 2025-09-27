@@ -18,7 +18,7 @@ class OSB_Admin_Ajax {
     public static function handleAjaxRequest() {
         // Verify nonce
         if (!wp_verify_nonce($_POST['nonce'], 'osb_admin_nonce')) {
-            wp_send_json_error(__('Security check failed.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Security check failed.', 'spelling-bee-pro'));
         }
 
         $action = sanitize_text_field($_POST['sub_action'] ?? '');
@@ -88,8 +88,28 @@ class OSB_Admin_Ajax {
                 self::executeBulkOperation();
                 break;
 
+            case 'approve_school':
+                self::approveSchool();
+                break;
+
+            case 'bulk_schools_action':
+                self::bulkSchoolsAction();
+                break;
+
+            case 'get_registration_form_data':
+                self::getRegistrationFormData();
+                break;
+
+            case 'create_student_wp_user':
+                self::createStudentWpUser();
+                break;
+
+            case 'bulk_students_action':
+                self::bulkStudentsAction();
+                break;
+
             default:
-                wp_send_json_error(__('Invalid action.', 'omafuru-spelling-bee'));
+                wp_send_json_error(__('Invalid action.', 'spelling-bee-pro'));
         }
     }
 
@@ -98,7 +118,7 @@ class OSB_Admin_Ajax {
      */
     private static function saveEvent() {
         if (!current_user_can('osb_manage_events')) {
-            wp_send_json_error(__('Permission denied.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Permission denied.', 'spelling-bee-pro'));
         }
 
         $event_id = intval($_POST['event_id'] ?? 0);
@@ -121,10 +141,10 @@ class OSB_Admin_Ajax {
 
         if ($event_id) {
             $result = $db->updateEvent($event_id, $event_data);
-            $message = __('Event updated successfully.', 'omafuru-spelling-bee');
+            $message = __('Event updated successfully.', 'spelling-bee-pro');
         } else {
             $result = $db->createEvent($event_data);
-            $message = __('Event created successfully.', 'omafuru-spelling-bee');
+            $message = __('Event created successfully.', 'spelling-bee-pro');
             $event_id = $result;
         }
 
@@ -134,7 +154,7 @@ class OSB_Admin_Ajax {
                 'event_id' => $event_id
             ));
         } else {
-            wp_send_json_error(__('Failed to save event.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Failed to save event.', 'spelling-bee-pro'));
         }
     }
 
@@ -143,7 +163,7 @@ class OSB_Admin_Ajax {
      */
     private static function saveSchool() {
         if (!current_user_can('osb_manage_schools')) {
-            wp_send_json_error(__('Permission denied.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Permission denied.', 'spelling-bee-pro'));
         }
 
         $school_id = intval($_POST['school_id'] ?? 0);
@@ -165,10 +185,10 @@ class OSB_Admin_Ajax {
 
         if ($school_id) {
             $result = $db->updateSchool($school_id, $school_data);
-            $message = __('School updated successfully.', 'omafuru-spelling-bee');
+            $message = __('School updated successfully.', 'spelling-bee-pro');
         } else {
             $result = $db->createSchool($school_data);
-            $message = __('School created successfully.', 'omafuru-spelling-bee');
+            $message = __('School created successfully.', 'spelling-bee-pro');
             $school_id = $result;
         }
 
@@ -178,7 +198,7 @@ class OSB_Admin_Ajax {
                 'school_id' => $school_id
             ));
         } else {
-            wp_send_json_error(__('Failed to save school.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Failed to save school.', 'spelling-bee-pro'));
         }
     }
 
@@ -187,7 +207,7 @@ class OSB_Admin_Ajax {
      */
     private static function saveStudent() {
         if (!current_user_can('osb_manage_students')) {
-            wp_send_json_error(__('Permission denied.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Permission denied.', 'spelling-bee-pro'));
         }
 
         $student_id = intval($_POST['student_id'] ?? 0);
@@ -213,10 +233,10 @@ class OSB_Admin_Ajax {
 
         if ($student_id) {
             $result = $db->updateStudent($student_id, $student_data);
-            $message = __('Student updated successfully.', 'omafuru-spelling-bee');
+            $message = __('Student updated successfully.', 'spelling-bee-pro');
         } else {
             $result = $db->createStudent($student_data);
-            $message = __('Student created successfully.', 'omafuru-spelling-bee');
+            $message = __('Student created successfully.', 'spelling-bee-pro');
             $student_id = $result;
         }
 
@@ -226,7 +246,7 @@ class OSB_Admin_Ajax {
                 'student_id' => $student_id
             ));
         } else {
-            wp_send_json_error(__('Failed to save student.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Failed to save student.', 'spelling-bee-pro'));
         }
     }
 
@@ -235,7 +255,7 @@ class OSB_Admin_Ajax {
      */
     private static function updateRegistrationStatus() {
         if (!current_user_can('osb_manage_registrations')) {
-            wp_send_json_error(__('Permission denied.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Permission denied.', 'spelling-bee-pro'));
         }
 
         $registration_id = intval($_POST['registration_id']);
@@ -263,10 +283,10 @@ class OSB_Admin_Ajax {
             }
 
             wp_send_json_success(array(
-                'message' => sprintf(__('Registration status updated to %s.', 'omafuru-spelling-bee'), $status)
+                'message' => sprintf(__('Registration status updated to %s.', 'spelling-bee-pro'), $status)
             ));
         } else {
-            wp_send_json_error(__('Failed to update registration status.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Failed to update registration status.', 'spelling-bee-pro'));
         }
     }
 
@@ -275,7 +295,7 @@ class OSB_Admin_Ajax {
      */
     private static function processDonation() {
         if (!current_user_can('osb_manage_donations')) {
-            wp_send_json_error(__('Permission denied.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Permission denied.', 'spelling-bee-pro'));
         }
 
         $donation_data = array(
@@ -303,11 +323,11 @@ class OSB_Admin_Ajax {
      */
     private static function uploadDocument() {
         if (!current_user_can('osb_manage_documents')) {
-            wp_send_json_error(__('Permission denied.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Permission denied.', 'spelling-bee-pro'));
         }
 
         if (empty($_FILES['document'])) {
-            wp_send_json_error(__('No file selected.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('No file selected.', 'spelling-bee-pro'));
         }
 
         $file_handler = OSB_File_Handler::getInstance();
@@ -328,7 +348,7 @@ class OSB_Admin_Ajax {
      */
     private static function saveSponsor() {
         if (!current_user_can('osb_manage_sponsors')) {
-            wp_send_json_error(__('Permission denied.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Permission denied.', 'spelling-bee-pro'));
         }
 
         $sponsor_id = intval($_POST['sponsor_id'] ?? 0);
@@ -356,11 +376,11 @@ class OSB_Admin_Ajax {
                 null,
                 array('%d')
             );
-            $message = __('Sponsor updated successfully.', 'omafuru-spelling-bee');
+            $message = __('Sponsor updated successfully.', 'spelling-bee-pro');
         } else {
             $sponsor_data['created_at'] = current_time('mysql');
             $result = $wpdb->insert($table_name, $sponsor_data);
-            $message = __('Sponsor created successfully.', 'omafuru-spelling-bee');
+            $message = __('Sponsor created successfully.', 'spelling-bee-pro');
             $sponsor_id = $wpdb->insert_id;
         }
 
@@ -370,7 +390,7 @@ class OSB_Admin_Ajax {
                 'sponsor_id' => $sponsor_id
             ));
         } else {
-            wp_send_json_error(__('Failed to save sponsor.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Failed to save sponsor.', 'spelling-bee-pro'));
         }
     }
 
@@ -379,7 +399,7 @@ class OSB_Admin_Ajax {
      */
     private static function resolveConflict() {
         if (!current_user_can('osb_resolve_conflicts')) {
-            wp_send_json_error(__('Permission denied.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Permission denied.', 'spelling-bee-pro'));
         }
 
         $conflict_id = intval($_POST['conflict_id']);
@@ -392,7 +412,7 @@ class OSB_Admin_Ajax {
             wp_send_json_error($result->get_error_message());
         } else {
             wp_send_json_success(array(
-                'message' => __('Conflict resolved successfully.', 'omafuru-spelling-bee')
+                'message' => __('Conflict resolved successfully.', 'spelling-bee-pro')
             ));
         }
     }
@@ -402,7 +422,7 @@ class OSB_Admin_Ajax {
      */
     private static function sendBulkEmail() {
         if (!current_user_can('osb_send_communications')) {
-            wp_send_json_error(__('Permission denied.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Permission denied.', 'spelling-bee-pro'));
         }
 
         $recipients = sanitize_text_field($_POST['recipients']);
@@ -447,7 +467,7 @@ class OSB_Admin_Ajax {
         }
 
         wp_send_json_success(array(
-            'message' => sprintf(__('Sent %d emails successfully.', 'omafuru-spelling-bee'), $sent_count),
+            'message' => sprintf(__('Sent %d emails successfully.', 'spelling-bee-pro'), $sent_count),
             'sent_count' => $sent_count,
             'total_count' => count($email_addresses)
         ));
@@ -458,7 +478,7 @@ class OSB_Admin_Ajax {
      */
     private static function generateReport() {
         if (!current_user_can('osb_view_reports')) {
-            wp_send_json_error(__('Permission denied.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Permission denied.', 'spelling-bee-pro'));
         }
 
         $report_type = sanitize_text_field($_POST['report_type']);
@@ -564,21 +584,21 @@ class OSB_Admin_Ajax {
      */
     private static function generateHTMLReport($report_type, $data) {
         $html = '<div class="osb-report">';
-        $html .= '<h2>' . sprintf(__('%s Report', 'omafuru-spelling-bee'), ucwords(str_replace('_', ' ', $report_type))) . '</h2>';
-        $html .= '<p><strong>' . __('Generated on:', 'omafuru-spelling-bee') . '</strong> ' . date('F j, Y g:i A') . '</p>';
+        $html .= '<h2>' . sprintf(__('%s Report', 'spelling-bee-pro'), ucwords(str_replace('_', ' ', $report_type))) . '</h2>';
+        $html .= '<p><strong>' . __('Generated on:', 'spelling-bee-pro') . '</strong> ' . date('F j, Y g:i A') . '</p>';
 
         switch ($report_type) {
             case 'event_summary':
                 if (isset($data['event'])) {
                     $html .= '<h3>' . $data['event']->title . '</h3>';
-                    $html .= '<p><strong>' . __('Total Registrations:', 'omafuru-spelling-bee') . '</strong> ' . count($data['registrations']) . '</p>';
-                    $html .= '<p><strong>' . __('Total Donations:', 'omafuru-spelling-bee') . '</strong> $' . number_format($data['donations']['total_amount'], 2) . '</p>';
+                    $html .= '<p><strong>' . __('Total Registrations:', 'spelling-bee-pro') . '</strong> ' . count($data['registrations']) . '</p>';
+                    $html .= '<p><strong>' . __('Total Donations:', 'spelling-bee-pro') . '</strong> $' . number_format($data['donations']['total_amount'], 2) . '</p>';
                 }
                 break;
 
             case 'schools_list':
                 $html .= '<table class="widefat">';
-                $html .= '<thead><tr><th>' . __('School Name', 'omafuru-spelling-bee') . '</th><th>' . __('Contact', 'omafuru-spelling-bee') . '</th><th>' . __('Status', 'omafuru-spelling-bee') . '</th></tr></thead>';
+                $html .= '<thead><tr><th>' . __('School Name', 'spelling-bee-pro') . '</th><th>' . __('Contact', 'spelling-bee-pro') . '</th><th>' . __('Status', 'spelling-bee-pro') . '</th></tr></thead>';
                 $html .= '<tbody>';
                 foreach ($data['schools'] as $school) {
                     $html .= '<tr>';
@@ -600,14 +620,14 @@ class OSB_Admin_Ajax {
      */
     private static function saveVideo() {
         if (!current_user_can('osb_manage_events')) {
-            wp_send_json_error(__('Permission denied.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Permission denied.', 'spelling-bee-pro'));
         }
 
         $video_id = intval($_POST['video_id'] ?? 0);
         $event_id = intval($_POST['event_id'] ?? 0);
 
         if (!$event_id) {
-            wp_send_json_error(__('Event ID is required.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Event ID is required.', 'spelling-bee-pro'));
         }
 
         // Map form fields to database columns based on actual schema
@@ -629,7 +649,7 @@ class OSB_Admin_Ajax {
 
         // Validate required fields
         if (empty($video_data['title']) || empty($video_url)) {
-            wp_send_json_error(__('Video title and URL are required.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Video title and URL are required.', 'spelling-bee-pro'));
         }
 
         global $wpdb;
@@ -644,7 +664,7 @@ class OSB_Admin_Ajax {
                 array('%d', '%s', '%s', '%s', '%s', '%s', '%d'),
                 array('%d')
             );
-            $message = __('Video updated successfully.', 'omafuru-spelling-bee');
+            $message = __('Video updated successfully.', 'spelling-bee-pro');
         } else {
             // Create new video
             $video_data['created_at'] = current_time('mysql');
@@ -656,7 +676,7 @@ class OSB_Admin_Ajax {
                 array('%d', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%d')
             );
             $video_id = $wpdb->insert_id;
-            $message = __('Video added successfully.', 'omafuru-spelling-bee');
+            $message = __('Video added successfully.', 'spelling-bee-pro');
         }
 
         if ($result !== false) {
@@ -668,7 +688,7 @@ class OSB_Admin_Ajax {
             // Get last error for debugging
             $error = $wpdb->last_error;
             error_log('Video save error: ' . $error);
-            wp_send_json_error(__('Failed to save video. Error: ', 'omafuru-spelling-bee') . $error);
+            wp_send_json_error(__('Failed to save video. Error: ', 'spelling-bee-pro') . $error);
         }
     }
 
@@ -680,7 +700,7 @@ class OSB_Admin_Ajax {
         $video_id = intval($_POST['video_id'] ?? 0);
 
         if (!$video_id) {
-            wp_send_json_error(__('Video ID is required.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Video ID is required.', 'spelling-bee-pro'));
         }
 
         global $wpdb;
@@ -692,7 +712,7 @@ class OSB_Admin_Ajax {
         ));
 
         if (!$video) {
-            wp_send_json_error(__('Video not found.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Video not found.', 'spelling-bee-pro'));
         }
 
         wp_send_json_success($video);
@@ -703,13 +723,13 @@ class OSB_Admin_Ajax {
      */
     private static function deleteVideo() {
         if (!current_user_can('osb_manage_events')) {
-            wp_send_json_error(__('Permission denied.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Permission denied.', 'spelling-bee-pro'));
         }
 
         $video_id = intval($_POST['video_id'] ?? 0);
 
         if (!$video_id) {
-            wp_send_json_error(__('Video ID is required.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Video ID is required.', 'spelling-bee-pro'));
         }
 
         global $wpdb;
@@ -723,10 +743,10 @@ class OSB_Admin_Ajax {
 
         if ($result !== false) {
             wp_send_json_success(array(
-                'message' => __('Video deleted successfully.', 'omafuru-spelling-bee')
+                'message' => __('Video deleted successfully.', 'spelling-bee-pro')
             ));
         } else {
-            wp_send_json_error(__('Failed to delete video.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Failed to delete video.', 'spelling-bee-pro'));
         }
     }
 
@@ -737,7 +757,7 @@ class OSB_Admin_Ajax {
         $event_id = intval($_POST['event_id'] ?? 0);
 
         if (!$event_id) {
-            wp_send_json_error(__('Event ID is required.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Event ID is required.', 'spelling-bee-pro'));
         }
 
         global $wpdb;
@@ -750,7 +770,7 @@ class OSB_Admin_Ajax {
         ));
 
         if (!$event) {
-            wp_send_json_error(__('Event not found.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Event not found.', 'spelling-bee-pro'));
         }
 
         wp_send_json_success($event);
@@ -761,14 +781,14 @@ class OSB_Admin_Ajax {
      */
     private static function previewBulkOperation() {
         if (!current_user_can('osb_manage_registrations')) {
-            wp_send_json_error(__('Permission denied.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Permission denied.', 'spelling-bee-pro'));
         }
 
         $action = sanitize_text_field($_POST['bulk_action']);
         $filter = sanitize_text_field($_POST['registration_filter']);
 
         if (empty($action)) {
-            wp_send_json_error(__('Please select an action.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Please select an action.', 'spelling-bee-pro'));
         }
 
         // Get affected registrations based on filter
@@ -787,7 +807,7 @@ class OSB_Admin_Ajax {
                 $where_clause = "WHERE r.status = 'under_review'";
                 break;
             default:
-                wp_send_json_error(__('Invalid filter selected.', 'omafuru-spelling-bee'));
+                wp_send_json_error(__('Invalid filter selected.', 'spelling-bee-pro'));
         }
 
         $registrations = $wpdb->get_results(
@@ -800,19 +820,19 @@ class OSB_Admin_Ajax {
         );
 
         if (empty($registrations)) {
-            wp_send_json_error(sprintf(__('No registrations found with status: %s', 'omafuru-spelling-bee'), $filter));
+            wp_send_json_error(sprintf(__('No registrations found with status: %s', 'spelling-bee-pro'), $filter));
         }
 
         $action_description = '';
         switch ($action) {
             case 'approve_all':
-                $action_description = __('Mark all selected registrations as approved', 'omafuru-spelling-bee');
+                $action_description = __('Mark all selected registrations as approved', 'spelling-bee-pro');
                 break;
             case 'mark_documents_submitted':
-                $action_description = __('Mark all selected registrations as documents submitted', 'omafuru-spelling-bee');
+                $action_description = __('Mark all selected registrations as documents submitted', 'spelling-bee-pro');
                 break;
             case 'send_reminder':
-                $action_description = __('Send reminder emails to all selected registrations', 'omafuru-spelling-bee');
+                $action_description = __('Send reminder emails to all selected registrations', 'spelling-bee-pro');
                 break;
         }
 
@@ -830,18 +850,18 @@ class OSB_Admin_Ajax {
      */
     private static function executeBulkOperation() {
         if (!current_user_can('osb_manage_registrations')) {
-            wp_send_json_error(__('Permission denied.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Permission denied.', 'spelling-bee-pro'));
         }
 
         if (!wp_verify_nonce($_POST['bulk_nonce'], 'osb_bulk_operation')) {
-            wp_send_json_error(__('Security check failed.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Security check failed.', 'spelling-bee-pro'));
         }
 
         $action = sanitize_text_field($_POST['bulk_action']);
         $filter = sanitize_text_field($_POST['registration_filter']);
 
         if (empty($action)) {
-            wp_send_json_error(__('Please select an action.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('Please select an action.', 'spelling-bee-pro'));
         }
 
         // Get affected registrations
@@ -860,7 +880,7 @@ class OSB_Admin_Ajax {
                 $where_clause = "WHERE status = 'under_review'";
                 break;
             default:
-                wp_send_json_error(__('Invalid filter selected.', 'omafuru-spelling-bee'));
+                wp_send_json_error(__('Invalid filter selected.', 'spelling-bee-pro'));
         }
 
         $registration_ids = $wpdb->get_col(
@@ -868,7 +888,7 @@ class OSB_Admin_Ajax {
         );
 
         if (empty($registration_ids)) {
-            wp_send_json_error(__('No registrations found to process.', 'omafuru-spelling-bee'));
+            wp_send_json_error(__('No registrations found to process.', 'spelling-bee-pro'));
         }
 
         // Execute bulk operation using workflow automation
@@ -921,7 +941,7 @@ class OSB_Admin_Ajax {
         $workflow_automation->createAdminNotification(
             'bulk_operation',
             sprintf(
-                __('Bulk operation completed: %s on %d registrations', 'omafuru-spelling-bee'),
+                __('Bulk operation completed: %s on %d registrations', 'spelling-bee-pro'),
                 $action,
                 count($registration_ids)
             ),
@@ -935,12 +955,672 @@ class OSB_Admin_Ajax {
 
         wp_send_json_success(array(
             'message' => sprintf(
-                __('Bulk operation completed. %d successful, %d failed out of %d total.', 'omafuru-spelling-bee'),
+                __('Bulk operation completed. %d successful, %d failed out of %d total.', 'spelling-bee-pro'),
                 $results['success'],
                 $results['failed'],
                 count($registration_ids)
             ),
             'results' => $results
         ));
+    }
+
+    /**
+     * Approve school
+     */
+    private static function approveSchool() {
+        if (!current_user_can('osb_manage_schools')) {
+            wp_send_json_error(__('Permission denied.', 'spelling-bee-pro'));
+        }
+
+        $school_id = intval($_POST['school_id'] ?? 0);
+
+        if (!$school_id) {
+            wp_send_json_error(__('School ID is required.', 'spelling-bee-pro'));
+        }
+
+        $db = OSB_Database::getInstance();
+
+        // Get current school status
+        $school = $db->getSchool($school_id);
+        if (!$school) {
+            wp_send_json_error(__('School not found.', 'spelling-bee-pro'));
+        }
+
+        $old_status = $school->status;
+
+        // Update school status to approved
+        $result = $db->updateSchool($school_id, array('status' => 'approved'));
+
+        if ($result) {
+            // Trigger status change workflow
+            do_action('osb_school_status_changed', $school_id, $old_status, 'approved');
+
+            // Send notification email if email handler exists
+            if (class_exists('OSB_Email_Handler')) {
+                $email_handler = OSB_Email_Handler::getInstance();
+                $email_handler->sendSchoolApprovalNotification($school_id);
+            }
+
+            wp_send_json_success(array(
+                'message' => sprintf(__('School "%s" has been approved successfully.', 'spelling-bee-pro'), $school->school_name),
+                'school_id' => $school_id,
+                'new_status' => 'approved'
+            ));
+        } else {
+            wp_send_json_error(__('Failed to approve school.', 'spelling-bee-pro'));
+        }
+    }
+
+    /**
+     * Handle bulk schools actions
+     */
+    private static function bulkSchoolsAction() {
+        if (!current_user_can('osb_manage_schools')) {
+            wp_send_json_error(__('Permission denied.', 'spelling-bee-pro'));
+        }
+
+        $action = sanitize_text_field($_POST['bulk_action'] ?? '');
+        $school_ids = array_map('intval', $_POST['school_ids'] ?? array());
+
+        if (empty($action)) {
+            wp_send_json_error(__('Please select an action.', 'spelling-bee-pro'));
+        }
+
+        if (empty($school_ids)) {
+            wp_send_json_error(__('Please select at least one school.', 'spelling-bee-pro'));
+        }
+
+        $db = OSB_Database::getInstance();
+        $results = array('success' => 0, 'failed' => 0, 'processed' => array());
+
+        foreach ($school_ids as $school_id) {
+            $school = $db->getSchool($school_id);
+            if (!$school) {
+                $results['failed']++;
+                continue;
+            }
+
+            $success = false;
+            $old_status = $school->status;
+
+            switch ($action) {
+                case 'approve':
+                    $success = $db->updateSchool($school_id, array('status' => 'approved'));
+                    if ($success) {
+                        do_action('osb_school_status_changed', $school_id, $old_status, 'approved');
+                    }
+                    break;
+
+                case 'reject':
+                    $success = $db->updateSchool($school_id, array('status' => 'rejected'));
+                    if ($success) {
+                        do_action('osb_school_status_changed', $school_id, $old_status, 'rejected');
+                    }
+                    break;
+
+                case 'pending':
+                    $success = $db->updateSchool($school_id, array('status' => 'pending'));
+                    if ($success) {
+                        do_action('osb_school_status_changed', $school_id, $old_status, 'pending');
+                    }
+                    break;
+
+                case 'delete':
+                    if (current_user_can('osb_manage_schools')) {
+                        $success = $db->deleteSchool($school_id);
+                        if ($success) {
+                            do_action('osb_school_deleted', $school_id, $school);
+                        }
+                    }
+                    break;
+
+                default:
+                    wp_send_json_error(__('Invalid bulk action.', 'spelling-bee-pro'));
+            }
+
+            if ($success) {
+                $results['success']++;
+                $results['processed'][] = $school_id;
+            } else {
+                $results['failed']++;
+            }
+        }
+
+        // Send notification emails for approved schools
+        if ($action === 'approve' && class_exists('OSB_Email_Handler')) {
+            $email_handler = OSB_Email_Handler::getInstance();
+            foreach ($results['processed'] as $school_id) {
+                $email_handler->sendSchoolApprovalNotification($school_id);
+            }
+        }
+
+        $action_label = '';
+        switch ($action) {
+            case 'approve':
+                $action_label = __('approved', 'spelling-bee-pro');
+                break;
+            case 'reject':
+                $action_label = __('rejected', 'spelling-bee-pro');
+                break;
+            case 'pending':
+                $action_label = __('set to pending', 'spelling-bee-pro');
+                break;
+            case 'delete':
+                $action_label = __('deleted', 'spelling-bee-pro');
+                break;
+        }
+
+        wp_send_json_success(array(
+            'message' => sprintf(
+                __('Bulk operation completed. %d schools %s successfully, %d failed out of %d total.', 'spelling-bee-pro'),
+                $results['success'],
+                $action_label,
+                $results['failed'],
+                count($school_ids)
+            ),
+            'results' => $results
+        ));
+    }
+
+    /**
+     * Get registration form data for modal display
+     */
+    private static function getRegistrationFormData() {
+        if (!current_user_can('osb_manage_registrations')) {
+            wp_send_json_error(__('Permission denied.', 'spelling-bee-pro'));
+        }
+
+        $registration_id = intval($_POST['registration_id']);
+        if (!$registration_id) {
+            wp_send_json_error(__('Registration ID required.', 'spelling-bee-pro'));
+        }
+
+        $db = OSB_Database::getInstance();
+        $registration = $db->getRegistrationById($registration_id);
+
+        if (!$registration) {
+            wp_send_json_error(__('Registration not found.', 'spelling-bee-pro'));
+        }
+
+        // Get school data
+        $school = $db->getSchool($registration->school_id);
+        if (!$school) {
+            wp_send_json_error(__('School not found.', 'spelling-bee-pro'));
+        }
+
+        // Get event data
+        $event = $db->getEvent($registration->event_id);
+        if (!$event) {
+            wp_send_json_error(__('Event not found.', 'spelling-bee-pro'));
+        }
+
+        // Get students
+        $students = $db->getStudentsBySchool($registration->school_id);
+
+        // Get documents
+        global $wpdb;
+        $documents = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT * FROM {$wpdb->prefix}osb_documents
+                 WHERE registration_id = %d
+                 ORDER BY upload_date DESC",
+                $registration_id
+            )
+        );
+
+        // Build HTML for modal content with tabbed interface
+        ob_start();
+        ?>
+        <div class="osb-form-data-container">
+            <!-- Tab Navigation -->
+            <div class="osb-tab-navigation">
+                <button type="button" class="osb-tab-button active" data-tab="overview">
+                    <span class="osb-tab-icon">📊</span>
+                    <span class="osb-tab-label">Overview</span>
+                </button>
+                <button type="button" class="osb-tab-button" data-tab="school">
+                    <span class="osb-tab-icon">🏫</span>
+                    <span class="osb-tab-label">School Details</span>
+                </button>
+                <?php if (!empty($students)): ?>
+                <button type="button" class="osb-tab-button" data-tab="students">
+                    <span class="osb-tab-icon">👨‍🎓</span>
+                    <span class="osb-tab-label">Students (<?php echo count($students); ?>)</span>
+                </button>
+                <?php endif; ?>
+                <?php if (!empty($documents)): ?>
+                <button type="button" class="osb-tab-button" data-tab="documents">
+                    <span class="osb-tab-icon">📎</span>
+                    <span class="osb-tab-label">Documents (<?php echo count($documents); ?>)</span>
+                </button>
+                <?php endif; ?>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="osb-tab-content">
+                <!-- Overview Tab -->
+                <div class="osb-tab-pane active" id="osb-tab-overview">
+                    <!-- Event Information -->
+                    <div class="osb-form-section">
+                        <div class="osb-form-section-header">
+                            🏆 Competition Information
+                        </div>
+                        <div class="osb-form-section-content">
+                            <div class="osb-data-grid">
+                                <div class="osb-data-item">
+                                    <div class="osb-data-label">Competition</div>
+                                    <div class="osb-data-value"><?php echo esc_html($event->title); ?></div>
+                                </div>
+                                <div class="osb-data-item">
+                                    <div class="osb-data-label">Year</div>
+                                    <div class="osb-data-value"><?php echo esc_html($event->year); ?></div>
+                                </div>
+                                <div class="osb-data-item">
+                                    <div class="osb-data-label">Event Date</div>
+                                    <div class="osb-data-value"><?php echo esc_html(date('F j, Y', strtotime($event->event_date))); ?></div>
+                                </div>
+                                <div class="osb-data-item">
+                                    <div class="osb-data-label">Venue</div>
+                                    <div class="osb-data-value"><?php echo esc_html($event->venue_name ?: 'Not specified'); ?></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Registration Information -->
+                    <div class="osb-form-section">
+                        <div class="osb-form-section-header">
+                            📝 Registration Details
+                        </div>
+                        <div class="osb-form-section-content">
+                            <div class="osb-data-grid">
+                                <div class="osb-data-item">
+                                    <div class="osb-data-label">Registration ID</div>
+                                    <div class="osb-data-value"><?php echo esc_html($registration->id); ?></div>
+                                </div>
+                                <div class="osb-data-item">
+                                    <div class="osb-data-label">Registration Token</div>
+                                    <div class="osb-data-value">
+                                        <code><?php echo esc_html($registration->registration_token); ?></code>
+                                    </div>
+                                </div>
+                                <div class="osb-data-item">
+                                    <div class="osb-data-label">Registration Date</div>
+                                    <div class="osb-data-value"><?php echo esc_html(date('F j, Y g:i A', strtotime($registration->created_at))); ?></div>
+                                </div>
+                                <div class="osb-data-item">
+                                    <div class="osb-data-label">Status</div>
+                                    <div class="osb-data-value">
+                                        <span class="osb-status osb-status-<?php echo esc_attr($registration->status); ?>">
+                                            <?php echo esc_html(ucfirst($registration->status)); ?>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="osb-data-item">
+                                    <div class="osb-data-label">Students Registered</div>
+                                    <div class="osb-data-value"><?php echo count($students); ?></div>
+                                </div>
+                                <div class="osb-data-item">
+                                    <div class="osb-data-label">Documents Uploaded</div>
+                                    <div class="osb-data-value"><?php echo count($documents); ?></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- School Details Tab -->
+                <div class="osb-tab-pane" id="osb-tab-school">
+                    <div class="osb-form-section">
+                        <div class="osb-form-section-header">
+                            🏫 School Information
+                        </div>
+                        <div class="osb-form-section-content">
+                            <div class="osb-data-grid">
+                                <div class="osb-data-item">
+                                    <div class="osb-data-label">School Name</div>
+                                    <div class="osb-data-value"><?php echo esc_html($school->school_name); ?></div>
+                                </div>
+                                <div class="osb-data-item">
+                                    <div class="osb-data-label">School Type</div>
+                                    <div class="osb-data-value"><?php echo esc_html(ucfirst($school->school_type)); ?></div>
+                                </div>
+                                <div class="osb-data-item">
+                                    <div class="osb-data-label">School Status</div>
+                                    <div class="osb-data-value">
+                                        <span class="osb-status osb-status-<?php echo esc_attr($school->status); ?>">
+                                            <?php echo esc_html(ucfirst($school->status)); ?>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="osb-data-item">
+                                    <div class="osb-data-label">Address</div>
+                                    <div class="osb-data-value"><?php echo esc_html($school->address ?: 'Not provided'); ?></div>
+                                </div>
+                                <div class="osb-data-item">
+                                    <div class="osb-data-label">City</div>
+                                    <div class="osb-data-value"><?php echo esc_html($school->city ?: 'Not provided'); ?></div>
+                                </div>
+                                <div class="osb-data-item">
+                                    <div class="osb-data-label">State</div>
+                                    <div class="osb-data-value"><?php echo esc_html($school->state ?: 'Not provided'); ?></div>
+                                </div>
+                                <div class="osb-data-item">
+                                    <div class="osb-data-label">Postal Code</div>
+                                    <div class="osb-data-value"><?php echo esc_html($school->postal_code ?: 'Not provided'); ?></div>
+                                </div>
+                                <div class="osb-data-item">
+                                    <div class="osb-data-label">Country</div>
+                                    <div class="osb-data-value"><?php echo esc_html($school->country ?: 'Not provided'); ?></div>
+                                </div>
+                                <div class="osb-data-item">
+                                    <div class="osb-data-label">Contact Person</div>
+                                    <div class="osb-data-value"><?php echo esc_html($school->contact_person); ?></div>
+                                </div>
+                                <div class="osb-data-item">
+                                    <div class="osb-data-label">Contact Email</div>
+                                    <div class="osb-data-value">
+                                        <a href="mailto:<?php echo esc_attr($school->contact_email); ?>">
+                                            <?php echo esc_html($school->contact_email); ?>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="osb-data-item">
+                                    <div class="osb-data-label">Contact Phone</div>
+                                    <div class="osb-data-value"><?php echo esc_html($school->contact_phone ?: 'Not provided'); ?></div>
+                                </div>
+                                <div class="osb-data-item">
+                                    <div class="osb-data-label">Registration Date</div>
+                                    <div class="osb-data-value"><?php echo esc_html($school->created_at ? date('F j, Y g:i A', strtotime($school->created_at)) : 'Not available'); ?></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Students Tab -->
+                <?php if (!empty($students)): ?>
+                <div class="osb-tab-pane" id="osb-tab-students">
+                    <div class="osb-form-section">
+                        <div class="osb-form-section-header">
+                            👨‍🎓 Registered Students (<?php echo count($students); ?>)
+                        </div>
+                        <div class="osb-form-section-content">
+                            <div class="osb-students-list">
+                                <?php foreach ($students as $index => $student): ?>
+                                <div class="osb-student-card">
+                                    <div class="osb-student-header">
+                                        <span class="osb-student-number">#<?php echo ($index + 1); ?></span>
+                                        <span class="osb-student-name"><?php echo esc_html($student->first_name . ' ' . $student->last_name); ?></span>
+                                    </div>
+                                    <div class="osb-data-grid">
+                                        <div class="osb-data-item">
+                                            <div class="osb-data-label">Grade Level</div>
+                                            <div class="osb-data-value"><?php echo esc_html($student->grade_level ?: 'Not specified'); ?></div>
+                                        </div>
+                                        <div class="osb-data-item">
+                                            <div class="osb-data-label">Gender</div>
+                                            <div class="osb-data-value"><?php echo esc_html($student->gender ?: 'Not specified'); ?></div>
+                                        </div>
+                                        <div class="osb-data-item">
+                                            <div class="osb-data-label">Date of Birth</div>
+                                            <div class="osb-data-value"><?php echo esc_html($student->date_of_birth ? date('F j, Y', strtotime($student->date_of_birth)) : 'Not provided'); ?></div>
+                                        </div>
+                                        <div class="osb-data-item">
+                                            <div class="osb-data-label">Student Email</div>
+                                            <div class="osb-data-value">
+                                                <?php if ($student->email): ?>
+                                                    <a href="mailto:<?php echo esc_attr($student->email); ?>">
+                                                        <?php echo esc_html($student->email); ?>
+                                                    </a>
+                                                <?php else: ?>
+                                                    Not provided
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                        <div class="osb-data-item">
+                                            <div class="osb-data-label">Student Phone</div>
+                                            <div class="osb-data-value"><?php echo esc_html($student->phone ?: 'Not provided'); ?></div>
+                                        </div>
+                                        <div class="osb-data-item">
+                                            <div class="osb-data-label">Parent/Guardian</div>
+                                            <div class="osb-data-value"><?php echo esc_html($student->parent_name ?: 'Not provided'); ?></div>
+                                        </div>
+                                        <div class="osb-data-item">
+                                            <div class="osb-data-label">Parent Email</div>
+                                            <div class="osb-data-value">
+                                                <?php if ($student->parent_email): ?>
+                                                    <a href="mailto:<?php echo esc_attr($student->parent_email); ?>">
+                                                        <?php echo esc_html($student->parent_email); ?>
+                                                    </a>
+                                                <?php else: ?>
+                                                    Not provided
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                        <div class="osb-data-item">
+                                            <div class="osb-data-label">Parent Phone</div>
+                                            <div class="osb-data-value"><?php echo esc_html($student->parent_phone ?: 'Not provided'); ?></div>
+                                        </div>
+                                        <div class="osb-data-item">
+                                            <div class="osb-data-label">Emergency Contact</div>
+                                            <div class="osb-data-value"><?php echo esc_html($student->emergency_contact_name ?: 'Not provided'); ?></div>
+                                        </div>
+                                        <div class="osb-data-item">
+                                            <div class="osb-data-label">Emergency Phone</div>
+                                            <div class="osb-data-value"><?php echo esc_html($student->emergency_contact_phone ?: 'Not provided'); ?></div>
+                                        </div>
+                                        <?php if ($student->medical_conditions): ?>
+                                        <div class="osb-data-item osb-data-full-width">
+                                            <div class="osb-data-label">Medical Conditions</div>
+                                            <div class="osb-data-value"><?php echo esc_html($student->medical_conditions); ?></div>
+                                        </div>
+                                        <?php endif; ?>
+                                        <?php if ($student->dietary_restrictions): ?>
+                                        <div class="osb-data-item osb-data-full-width">
+                                            <div class="osb-data-label">Dietary Restrictions</div>
+                                            <div class="osb-data-value"><?php echo esc_html($student->dietary_restrictions); ?></div>
+                                        </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <!-- Documents Tab -->
+                <?php if (!empty($documents)): ?>
+                <div class="osb-tab-pane" id="osb-tab-documents">
+                    <div class="osb-form-section">
+                        <div class="osb-form-section-header">
+                            📎 Uploaded Documents (<?php echo count($documents); ?>)
+                        </div>
+                        <div class="osb-form-section-content">
+                            <div class="osb-documents-list">
+                                <?php foreach ($documents as $document): ?>
+                                <div class="osb-document-item">
+                                    <div class="osb-document-info">
+                                        <div class="osb-document-name">
+                                            <span class="osb-document-icon">📄</span>
+                                            <?php echo esc_html($document->file_name); ?>
+                                        </div>
+                                        <div class="osb-document-meta">
+                                            <span class="osb-document-type">
+                                                Type: <?php echo esc_html(ucfirst(str_replace('_', ' ', $document->document_type))); ?>
+                                            </span>
+                                            <span class="osb-document-size">
+                                                Size: <?php echo esc_html(size_format($document->file_size)); ?>
+                                            </span>
+                                            <span class="osb-document-date">
+                                                Uploaded: <?php echo esc_html(date('M j, Y g:i A', strtotime($document->upload_date))); ?>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="osb-document-actions">
+                                        <a href="<?php echo esc_url($document->file_path); ?>" target="_blank" class="button button-primary button-small">
+                                            <span class="dashicons dashicons-visibility" style="font-size: 13px; vertical-align: middle;"></span>
+                                            View
+                                        </a>
+                                        <a href="<?php echo esc_url($document->file_path); ?>" download class="button button-small">
+                                            <span class="dashicons dashicons-download" style="font-size: 13px; vertical-align: middle;"></span>
+                                            Download
+                                        </a>
+                                    </div>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php
+
+        $html = ob_get_clean();
+
+        wp_send_json_success(array(
+            'html' => $html,
+            'registration' => $registration,
+            'school' => $school,
+            'event' => $event,
+            'students_count' => count($students),
+            'documents_count' => count($documents)
+        ));
+    }
+
+    /**
+     * Create WordPress user for a student
+     */
+    private static function createStudentWpUser() {
+        if (!current_user_can('osb_manage_students')) {
+            wp_send_json_error(__('Permission denied.', 'spelling-bee-pro'));
+        }
+
+        $student_id = intval($_POST['student_id']);
+        if (!$student_id) {
+            wp_send_json_error(__('Invalid student ID.', 'spelling-bee-pro'));
+        }
+
+        $user_manager = OSB_User_Manager::getInstance();
+        $result = $user_manager->createStudentWordPressUser($student_id);
+
+        if ($result['success']) {
+            wp_send_json_success(array(
+                'message' => $result['message'],
+                'action' => $result['action'],
+                'user_id' => $result['user_id'] ?? null,
+                'username' => $result['username'] ?? null
+            ));
+        } else {
+            wp_send_json_error($result['message']);
+        }
+    }
+
+    /**
+     * Handle bulk students actions
+     */
+    private static function bulkStudentsAction() {
+        if (!current_user_can('osb_manage_students')) {
+            wp_send_json_error(__('Permission denied.', 'spelling-bee-pro'));
+        }
+
+        $action = sanitize_text_field($_POST['bulk_action']);
+        $student_ids = array_map('intval', $_POST['student_ids']);
+
+        if (empty($student_ids)) {
+            wp_send_json_error(__('No students selected.', 'spelling-bee-pro'));
+        }
+
+        switch ($action) {
+            case 'delete':
+                $deleted = 0;
+                $failed = 0;
+
+                foreach ($student_ids as $student_id) {
+                    if (self::deleteStudentById($student_id)) {
+                        $deleted++;
+                    } else {
+                        $failed++;
+                    }
+                }
+
+                if ($deleted > 0) {
+                    $message = sprintf(_n('%d student deleted successfully.', '%d students deleted successfully.', $deleted, 'spelling-bee-pro'), $deleted);
+                    if ($failed > 0) {
+                        $message .= ' ' . sprintf(_n('%d student could not be deleted.', '%d students could not be deleted.', $failed, 'spelling-bee-pro'), $failed);
+                    }
+                    wp_send_json_success(array('message' => $message));
+                } else {
+                    wp_send_json_error(__('No students were deleted.', 'spelling-bee-pro'));
+                }
+                break;
+
+            default:
+                wp_send_json_error(__('Invalid bulk action.', 'spelling-bee-pro'));
+        }
+    }
+
+    /**
+     * Delete a student by ID (helper method)
+     */
+    private static function deleteStudentById($student_id) {
+        global $wpdb;
+        $table_prefix = $wpdb->prefix . OSB_TABLE_PREFIX;
+
+        // Start transaction
+        $wpdb->query('START TRANSACTION');
+
+        try {
+            // Delete related documents
+            $wpdb->delete(
+                "{$table_prefix}documents",
+                array('student_id' => $student_id),
+                array('%d')
+            );
+
+            // Delete WordPress user if linked
+            $student = $wpdb->get_row($wpdb->prepare(
+                "SELECT wp_user_id, first_name, last_name FROM {$table_prefix}students WHERE id = %d",
+                $student_id
+            ));
+
+            if ($student && $student->wp_user_id) {
+                // Only delete WordPress user if it has 'student' role
+                $wp_user = get_userdata($student->wp_user_id);
+                if ($wp_user && in_array('student', $wp_user->roles)) {
+                    wp_delete_user($student->wp_user_id);
+                }
+            }
+
+            // Delete student record
+            $result = $wpdb->delete(
+                "{$table_prefix}students",
+                array('id' => $student_id),
+                array('%d')
+            );
+
+            if ($result === false) {
+                throw new Exception('Failed to delete student record');
+            }
+
+            // Log the deletion
+            if ($student) {
+                error_log('[OSB] Student deleted via bulk action: ' . $student->first_name . ' ' . $student->last_name . ' (ID: ' . $student_id . ')');
+            }
+
+            // Commit transaction
+            $wpdb->query('COMMIT');
+            return true;
+
+        } catch (Exception $e) {
+            // Rollback transaction
+            $wpdb->query('ROLLBACK');
+            error_log('[OSB] Failed to delete student ' . $student_id . ' via bulk action: ' . $e->getMessage());
+            return false;
+        }
     }
 }

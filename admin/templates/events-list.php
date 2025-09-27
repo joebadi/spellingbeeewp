@@ -14,20 +14,20 @@ $admin_menu = OSB_Admin_Menu::getInstance();
 ?>
 
 <div class="wrap">
-    <h1 class="wp-heading-inline"><?php _e('Events', 'omafuru-spelling-bee'); ?></h1>
+    <h1 class="wp-heading-inline"><?php _e('Events', 'spelling-bee-pro'); ?></h1>
     <a href="<?php echo $admin_menu->getAdminUrl('events', array('action' => 'new')); ?>" class="page-title-action">
-        <?php _e('Add New Event', 'omafuru-spelling-bee'); ?>
+        <?php _e('Add New Event', 'spelling-bee-pro'); ?>
     </a>
 
     <?php if (isset($_GET['deleted'])): ?>
         <div class="notice notice-success is-dismissible">
-            <p><?php _e('Event deleted successfully.', 'omafuru-spelling-bee'); ?></p>
+            <p><?php _e('Event deleted successfully.', 'spelling-bee-pro'); ?></p>
         </div>
     <?php endif; ?>
 
     <?php if (isset($_GET['saved'])): ?>
         <div class="notice notice-success is-dismissible">
-            <p><?php _e('Event saved successfully.', 'omafuru-spelling-bee'); ?></p>
+            <p><?php _e('Event saved successfully.', 'spelling-bee-pro'); ?></p>
         </div>
     <?php endif; ?>
 
@@ -37,15 +37,15 @@ $admin_menu = OSB_Admin_Menu::getInstance();
     <div class="osb-filters">
         <div class="osb-filter-bar">
             <select id="osb-status-filter" class="osb-filter-select">
-                <option value=""><?php _e('All Statuses', 'omafuru-spelling-bee'); ?></option>
-                <option value="upcoming"><?php _e('Upcoming', 'omafuru-spelling-bee'); ?></option>
-                <option value="live"><?php _e('Live', 'omafuru-spelling-bee'); ?></option>
-                <option value="completed"><?php _e('Completed', 'omafuru-spelling-bee'); ?></option>
-                <option value="cancelled"><?php _e('Cancelled', 'omafuru-spelling-bee'); ?></option>
+                <option value=""><?php _e('All Statuses', 'spelling-bee-pro'); ?></option>
+                <option value="upcoming"><?php _e('Upcoming', 'spelling-bee-pro'); ?></option>
+                <option value="live"><?php _e('Live', 'spelling-bee-pro'); ?></option>
+                <option value="completed"><?php _e('Completed', 'spelling-bee-pro'); ?></option>
+                <option value="cancelled"><?php _e('Cancelled', 'spelling-bee-pro'); ?></option>
             </select>
 
             <select id="osb-year-filter" class="osb-filter-select">
-                <option value=""><?php _e('All Years', 'omafuru-spelling-bee'); ?></option>
+                <option value=""><?php _e('All Years', 'spelling-bee-pro'); ?></option>
                 <?php
                 $years = array_unique(array_map(function($event) {
                     return $event->year;
@@ -58,10 +58,10 @@ $admin_menu = OSB_Admin_Menu::getInstance();
             </select>
 
             <input type="search" id="osb-search-events" class="osb-search-input"
-                   placeholder="<?php _e('Search events...', 'omafuru-spelling-bee'); ?>">
+                   placeholder="<?php _e('Search events...', 'spelling-bee-pro'); ?>">
 
             <button type="button" id="osb-clear-filters" class="button">
-                <?php _e('Clear Filters', 'omafuru-spelling-bee'); ?>
+                <?php _e('Clear Filters', 'spelling-bee-pro'); ?>
             </button>
         </div>
     </div>
@@ -83,7 +83,7 @@ $admin_menu = OSB_Admin_Menu::getInstance();
 
                     <div class="osb-event-meta">
                         <div class="osb-event-date">
-                            <strong><?php _e('Date:', 'omafuru-spelling-bee'); ?></strong>
+                            <strong><?php _e('Date:', 'spelling-bee-pro'); ?></strong>
                             <?php echo date('F j, Y', strtotime($event->event_date)); ?>
                             <?php if (!empty($event->event_time)): ?>
                                 at <?php echo date('g:i A', strtotime($event->event_time)); ?>
@@ -92,19 +92,19 @@ $admin_menu = OSB_Admin_Menu::getInstance();
 
                         <?php if (!empty($event->venue_name)): ?>
                         <div class="osb-event-venue">
-                            <strong><?php _e('Venue:', 'omafuru-spelling-bee'); ?></strong>
+                            <strong><?php _e('Venue:', 'spelling-bee-pro'); ?></strong>
                             <?php echo esc_html($event->venue_name); ?>
                         </div>
                         <?php endif; ?>
 
                         <div class="osb-event-year">
-                            <strong><?php _e('Year:', 'omafuru-spelling-bee'); ?></strong>
+                            <strong><?php _e('Year:', 'spelling-bee-pro'); ?></strong>
                             <?php echo esc_html($event->year); ?>
                         </div>
 
                         <?php if (!empty($event->prize_fund_goal) && $event->prize_fund_goal > 0): ?>
                         <div class="osb-event-prize">
-                            <strong><?php _e('Prize Fund Goal:', 'omafuru-spelling-bee'); ?></strong>
+                            <strong><?php _e('Prize Fund Goal:', 'spelling-bee-pro'); ?></strong>
                             $<?php echo number_format($event->prize_fund_goal, 2); ?>
                         </div>
                         <?php endif; ?>
@@ -135,12 +135,12 @@ $admin_menu = OSB_Admin_Menu::getInstance();
                         );
                         ?>
                         <div class="osb-stat-item">
-                            <span class="osb-stat-label"><?php _e('Registrations:', 'omafuru-spelling-bee'); ?></span>
+                            <span class="osb-stat-label"><?php _e('Registrations:', 'spelling-bee-pro'); ?></span>
                             <span class="osb-stat-value"><?php echo intval($registrations_count); ?></span>
                         </div>
 
                         <div class="osb-stat-item">
-                            <span class="osb-stat-label"><?php _e('Donations:', 'omafuru-spelling-bee'); ?></span>
+                            <span class="osb-stat-label"><?php _e('Donations:', 'spelling-bee-pro'); ?></span>
                             <span class="osb-stat-value">$<?php echo number_format(floatval($donations_total), 2); ?></span>
                         </div>
                     </div>
@@ -148,35 +148,35 @@ $admin_menu = OSB_Admin_Menu::getInstance();
                     <div class="osb-event-actions">
                         <a href="<?php echo $admin_menu->getAdminUrl('events', array('action' => 'view', 'event_id' => $event->id)); ?>"
                            class="button">
-                            <?php _e('View', 'omafuru-spelling-bee'); ?>
+                            <?php _e('View', 'spelling-bee-pro'); ?>
                         </a>
 
                         <a href="<?php echo $admin_menu->getAdminUrl('events', array('action' => 'edit', 'event_id' => $event->id)); ?>"
                            class="button button-primary">
-                            <?php _e('Edit', 'omafuru-spelling-bee'); ?>
+                            <?php _e('Edit', 'spelling-bee-pro'); ?>
                         </a>
 
                         <a href="<?php echo $admin_menu->getAdminUrl('registrations', array('event_id' => $event->id)); ?>"
                            class="button">
-                            <?php _e('Registrations', 'omafuru-spelling-bee'); ?>
+                            <?php _e('Registrations', 'spelling-bee-pro'); ?>
                         </a>
 
                         <div class="osb-event-actions-dropdown">
                             <button type="button" class="button osb-dropdown-toggle">
-                                <?php _e('More', 'omafuru-spelling-bee'); ?> ▼
+                                <?php _e('More', 'spelling-bee-pro'); ?> ▼
                             </button>
                             <div class="osb-dropdown-menu">
                                 <a href="<?php echo $admin_menu->getAdminUrl('donations', array('event_id' => $event->id)); ?>">
-                                    <?php _e('View Donations', 'omafuru-spelling-bee'); ?>
+                                    <?php _e('View Donations', 'spelling-bee-pro'); ?>
                                 </a>
                                 <a href="<?php echo $admin_menu->getAdminUrl('reports', array('event_id' => $event->id)); ?>">
-                                    <?php _e('Generate Report', 'omafuru-spelling-bee'); ?>
+                                    <?php _e('Generate Report', 'spelling-bee-pro'); ?>
                                 </a>
                                 <hr>
                                 <a href="<?php echo $admin_menu->getActionUrl('delete_event', array('event_id' => $event->id)); ?>"
                                    class="osb-delete-link"
-                                   onclick="return confirm('<?php _e('Are you sure you want to delete this event? This action cannot be undone.', 'omafuru-spelling-bee'); ?>')">
-                                    <?php _e('Delete Event', 'omafuru-spelling-bee'); ?>
+                                   onclick="return confirm('<?php _e('Are you sure you want to delete this event? This action cannot be undone.', 'spelling-bee-pro'); ?>')">
+                                    <?php _e('Delete Event', 'spelling-bee-pro'); ?>
                                 </a>
                             </div>
                         </div>
@@ -194,11 +194,11 @@ $admin_menu = OSB_Admin_Menu::getInstance();
         <div class="osb-no-events">
             <div class="osb-empty-state">
                 <div class="osb-empty-icon">📅</div>
-                <h3><?php _e('No Events Found', 'omafuru-spelling-bee'); ?></h3>
-                <p><?php _e('Create your first spelling bee event to get started.', 'omafuru-spelling-bee'); ?></p>
+                <h3><?php _e('No Events Found', 'spelling-bee-pro'); ?></h3>
+                <p><?php _e('Create your first spelling bee event to get started.', 'spelling-bee-pro'); ?></p>
                 <a href="<?php echo $admin_menu->getAdminUrl('events', array('action' => 'new')); ?>"
                    class="button button-primary button-large">
-                    <?php _e('Create New Event', 'omafuru-spelling-bee'); ?>
+                    <?php _e('Create New Event', 'spelling-bee-pro'); ?>
                 </a>
             </div>
         </div>

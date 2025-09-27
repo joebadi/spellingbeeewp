@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Spelling Bee Pro
- * Plugin URI: https://omafurufoundation.org
+ * Plugin URI: https://www.e-clicks.net/plugins/spelling-bee-pro
  * Description: Complete competition management system for spelling bee competitions with registration, video management, and user integration.
  * Version: 1.0.0
  * Author: E-Clicks Solutions
@@ -25,7 +25,7 @@ if (!defined('ABSPATH')) {
 if (defined('OSB_PLUGIN_VERSION') ||
     defined('OSB_TABLE_PREFIX') ||
     function_exists('osb_init_plugin') ||
-    class_exists('OmafuruSpellingBee')) {
+    class_exists('SpellingBeePro')) {
 
     // Add admin notice about duplicate installation
     add_action('admin_notices', function() {
@@ -168,8 +168,8 @@ try {
 /**
  * Main Plugin Class
  */
-if (!class_exists('OmafuruSpellingBee')) {
-class OmafuruSpellingBee {
+if (!class_exists('SpellingBeePro')) {
+class SpellingBeePro {
 
     /**
      * Plugin instance
@@ -319,6 +319,9 @@ class OmafuruSpellingBee {
         add_action('admin_post_osb_save_event', array($this, 'handleSaveEvent'));
         add_action('admin_post_osb_save_school', array($this, 'handleSaveSchool'));
         add_action('admin_post_osb_save_student', array($this, 'handleSaveStudent'));
+
+        // Student WordPress user creation on registration approval
+        add_action('osb_registration_status_changed', array($this, 'handleRegistrationStatusChange'), 10, 3);
     }
 
     /**
@@ -344,6 +347,11 @@ class OmafuruSpellingBee {
      * Initialize the plugin
      */
     private function initializePlugin() {
+        // Check if database migration is needed and run it
+        if (class_exists('OSB_Database_Migration') && OSB_Database_Migration::migrationNeeded()) {
+            OSB_Database_Migration::migrate();
+        }
+
         // Run any initialization code here
         do_action('osb_plugin_loaded', $this);
     }
@@ -353,7 +361,7 @@ class OmafuruSpellingBee {
      */
     public function loadTextDomain() {
         load_plugin_textdomain(
-            'omafuru-spelling-bee',
+            'spelling-bee-pro',
             false,
             dirname(OSB_PLUGIN_BASENAME) . '/languages/'
         );
@@ -386,8 +394,8 @@ class OmafuruSpellingBee {
             true
         );
 
-        // Localize script for AJAX
-        wp_localize_script('osb-admin-script', 'osb_admin', array(
+        // Localize script for AJAX - Both osb_ajax and osb_admin for compatibility
+        $ajax_data = array(
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('osb_admin_nonce'),
             'strings' => array(
@@ -395,7 +403,10 @@ class OmafuruSpellingBee {
                 'error_message' => __('An error occurred. Please try again.', 'spelling-bee-pro'),
                 'success_message' => __('Operation completed successfully.', 'spelling-bee-pro')
             )
-        ));
+        );
+
+        wp_localize_script('osb-admin-script', 'osb_ajax', $ajax_data);
+        wp_localize_script('osb-admin-script', 'osb_admin', $ajax_data);
     }
 
     /**
@@ -422,9 +433,9 @@ class OmafuruSpellingBee {
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('osb_public_nonce'),
             'strings' => array(
-                'loading' => __('Loading...', 'omafuru-spelling-bee'),
-                'error' => __('Error occurred. Please try again.', 'omafuru-spelling-bee'),
-                'success' => __('Success!', 'omafuru-spelling-bee')
+                'loading' => __('Loading...', 'spelling-bee-pro'),
+                'error' => __('Error occurred. Please try again.', 'spelling-bee-pro'),
+                'success' => __('Success!', 'spelling-bee-pro')
             )
         ));
     }
@@ -489,6 +500,7 @@ class OmafuruSpellingBee {
             'venue_address' => sanitize_textarea_field($_POST['venue_address']),
             'status' => sanitize_text_field($_POST['status']),
             'max_students_per_school' => intval($_POST['max_students_per_school']),
+            'min_students_per_school' => intval($_POST['min_students_per_school']),
             'registration_deadline' => sanitize_text_field($_POST['registration_deadline']),
             'prize_fund_goal' => floatval($_POST['prize_fund_goal']),
             'flyer_url' => esc_url_raw($_POST['flyer_url']),
@@ -504,7 +516,7 @@ class OmafuruSpellingBee {
                 $wpdb->prefix . 'osb_events',
                 $event_data,
                 array('id' => $event_id),
-                array('%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%f', '%s', '%d'),
+                array('%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%f', '%s', '%d'),
                 array('%d')
             );
             $message = __('Event updated successfully.', 'spelling-bee-pro');
@@ -515,7 +527,7 @@ class OmafuruSpellingBee {
             $result = $wpdb->insert(
                 $wpdb->prefix . 'osb_events',
                 $event_data,
-                array('%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%f', '%s', '%d', '%s')
+                array('%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%f', '%s', '%d', '%s')
             );
             $event_id = $wpdb->insert_id;
             $message = __('Event created successfully.', 'spelling-bee-pro');
@@ -546,6 +558,29 @@ class OmafuruSpellingBee {
         // Similar implementation for students
         wp_die(__('Student save handler not yet implemented.', 'spelling-bee-pro'));
     }
+
+    /**
+     * Handle registration status change to create WordPress users for students
+     */
+    public function handleRegistrationStatusChange($registration_id, $old_status, $new_status) {
+        // Only create WordPress users when registration is approved
+        if ($new_status === 'approved' && $old_status !== 'approved') {
+            $db = OSB_Database::getInstance();
+            $registration = $db->getRegistrationById($registration_id);
+
+            if ($registration) {
+                $user_manager = OSB_User_Manager::getInstance();
+                $result = $user_manager->createStudentsWordPressUsers($registration->school_id);
+
+                // Log the result for debugging
+                error_log('[OSB] Created WordPress users for approved registration ' . $registration_id . ': ' .
+                         $result['created'] . ' created, ' .
+                         $result['linked'] . ' linked, ' .
+                         $result['skipped'] . ' skipped, ' .
+                         $result['failed'] . ' failed');
+            }
+        }
+    }
 }
 } // End class exists check
 
@@ -556,7 +591,7 @@ if (!function_exists('osb_init_plugin')) {
     function osb_init_plugin() {
     try {
         osb_log_error("Initializing main plugin instance");
-        $instance = OmafuruSpellingBee::getInstance();
+        $instance = SpellingBeePro::getInstance();
         osb_log_error("Plugin instance created successfully");
         return $instance;
     } catch (Exception $e) {
@@ -607,6 +642,6 @@ if (!defined('OSB_PLUGIN_INITIALIZED')) {
  */
 if (!function_exists('osb')) {
     function osb() {
-        return OmafuruSpellingBee::getInstance();
+        return SpellingBeePro::getInstance();
     }
 }

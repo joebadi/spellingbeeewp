@@ -46,8 +46,8 @@ class OSB_Admin_Menu {
     public function addMenuPages() {
         // Main menu page
         add_menu_page(
-            __('Spelling Bee', 'omafuru-spelling-bee'),
-            __('Spelling Bee', 'omafuru-spelling-bee'),
+            __('Spelling Bee', 'spelling-bee-pro'),
+            __('Spelling Bee', 'spelling-bee-pro'),
             'osb_manage_events',
             $this->menu_prefix,
             array($this, 'renderDashboard'),
@@ -58,8 +58,8 @@ class OSB_Admin_Menu {
         // Dashboard (same as main page)
         add_submenu_page(
             $this->menu_prefix,
-            __('Dashboard', 'omafuru-spelling-bee'),
-            __('Dashboard', 'omafuru-spelling-bee'),
+            __('Dashboard', 'spelling-bee-pro'),
+            __('Dashboard', 'spelling-bee-pro'),
             'osb_manage_events',
             $this->menu_prefix,
             array($this, 'renderDashboard')
@@ -68,8 +68,8 @@ class OSB_Admin_Menu {
         // Events
         add_submenu_page(
             $this->menu_prefix,
-            __('Events', 'omafuru-spelling-bee'),
-            __('Events', 'omafuru-spelling-bee'),
+            __('Events', 'spelling-bee-pro'),
+            __('Events', 'spelling-bee-pro'),
             'osb_manage_events',
             $this->menu_prefix . '-events',
             array($this, 'renderEvents')
@@ -78,8 +78,8 @@ class OSB_Admin_Menu {
         // Schools
         add_submenu_page(
             $this->menu_prefix,
-            __('Schools', 'omafuru-spelling-bee'),
-            __('Schools', 'omafuru-spelling-bee'),
+            __('Schools', 'spelling-bee-pro'),
+            __('Schools', 'spelling-bee-pro'),
             'osb_manage_schools',
             $this->menu_prefix . '-schools',
             array($this, 'renderSchools')
@@ -88,8 +88,8 @@ class OSB_Admin_Menu {
         // Students
         add_submenu_page(
             $this->menu_prefix,
-            __('Students', 'omafuru-spelling-bee'),
-            __('Students', 'omafuru-spelling-bee'),
+            __('Students', 'spelling-bee-pro'),
+            __('Students', 'spelling-bee-pro'),
             'osb_manage_students',
             $this->menu_prefix . '-students',
             array($this, 'renderStudents')
@@ -98,8 +98,8 @@ class OSB_Admin_Menu {
         // Registrations
         add_submenu_page(
             $this->menu_prefix,
-            __('Registrations', 'omafuru-spelling-bee'),
-            __('Registrations', 'omafuru-spelling-bee'),
+            __('Registrations', 'spelling-bee-pro'),
+            __('Registrations', 'spelling-bee-pro'),
             'osb_manage_registrations',
             $this->menu_prefix . '-registrations',
             array($this, 'renderRegistrations')
@@ -108,8 +108,8 @@ class OSB_Admin_Menu {
         // Donations
         add_submenu_page(
             $this->menu_prefix,
-            __('Donations', 'omafuru-spelling-bee'),
-            __('Donations', 'omafuru-spelling-bee'),
+            __('Donations', 'spelling-bee-pro'),
+            __('Donations', 'spelling-bee-pro'),
             'osb_manage_donations',
             $this->menu_prefix . '-donations',
             array($this, 'renderDonations')
@@ -118,8 +118,8 @@ class OSB_Admin_Menu {
         // Documents
         add_submenu_page(
             $this->menu_prefix,
-            __('Documents', 'omafuru-spelling-bee'),
-            __('Documents', 'omafuru-spelling-bee'),
+            __('Documents', 'spelling-bee-pro'),
+            __('Documents', 'spelling-bee-pro'),
             'osb_manage_documents',
             $this->menu_prefix . '-documents',
             array($this, 'renderDocuments')
@@ -128,8 +128,8 @@ class OSB_Admin_Menu {
         // Sponsors
         add_submenu_page(
             $this->menu_prefix,
-            __('Sponsors', 'omafuru-spelling-bee'),
-            __('Sponsors', 'omafuru-spelling-bee'),
+            __('Sponsors', 'spelling-bee-pro'),
+            __('Sponsors', 'spelling-bee-pro'),
             'osb_manage_sponsors',
             $this->menu_prefix . '-sponsors',
             array($this, 'renderSponsors')
@@ -138,8 +138,8 @@ class OSB_Admin_Menu {
         // User Conflicts
         add_submenu_page(
             $this->menu_prefix,
-            __('User Conflicts', 'omafuru-spelling-bee'),
-            __('Conflicts', 'omafuru-spelling-bee'),
+            __('User Conflicts', 'spelling-bee-pro'),
+            __('Conflicts', 'spelling-bee-pro'),
             'osb_resolve_conflicts',
             $this->menu_prefix . '-conflicts',
             array($this, 'renderConflicts')
@@ -148,8 +148,8 @@ class OSB_Admin_Menu {
         // Communications
         add_submenu_page(
             $this->menu_prefix,
-            __('Communications', 'omafuru-spelling-bee'),
-            __('Communications', 'omafuru-spelling-bee'),
+            __('Communications', 'spelling-bee-pro'),
+            __('Communications', 'spelling-bee-pro'),
             'osb_send_communications',
             $this->menu_prefix . '-communications',
             array($this, 'renderCommunications')
@@ -158,8 +158,8 @@ class OSB_Admin_Menu {
         // Reports
         add_submenu_page(
             $this->menu_prefix,
-            __('Reports', 'omafuru-spelling-bee'),
-            __('Reports', 'omafuru-spelling-bee'),
+            __('Reports', 'spelling-bee-pro'),
+            __('Reports', 'spelling-bee-pro'),
             'osb_view_reports',
             $this->menu_prefix . '-reports',
             array($this, 'renderReports')
@@ -168,8 +168,8 @@ class OSB_Admin_Menu {
         // Settings
         add_submenu_page(
             $this->menu_prefix,
-            __('Settings', 'omafuru-spelling-bee'),
-            __('Settings', 'omafuru-spelling-bee'),
+            __('Settings', 'spelling-bee-pro'),
+            __('Settings', 'spelling-bee-pro'),
             'osb_manage_settings',
             $this->menu_prefix . '-settings',
             array($this, 'renderSettings')
@@ -178,12 +178,24 @@ class OSB_Admin_Menu {
         // Automation & Notifications
         add_submenu_page(
             $this->menu_prefix,
-            __('Automation', 'omafuru-spelling-bee'),
-            __('Automation', 'omafuru-spelling-bee'),
+            __('Automation', 'spelling-bee-pro'),
+            __('Automation', 'spelling-bee-pro'),
             'osb_manage_registrations',
             $this->menu_prefix . '-automation',
             array($this, 'renderAutomation')
         );
+
+        // Add debug tools for administrators
+        if (current_user_can('administrator')) {
+            add_submenu_page(
+                $this->menu_prefix,
+                __('Debug Tools', 'spelling-bee-pro'),
+                __('Debug Tools', 'spelling-bee-pro'),
+                'administrator',
+                $this->menu_prefix . '-debug',
+                array($this, 'renderDebugTools')
+            );
+        }
     }
 
     /**
@@ -334,6 +346,10 @@ class OSB_Admin_Menu {
             case 'view':
                 $student = $db->getStudent($student_id);
                 $this->renderPage('students-view', array('student' => $student));
+                break;
+
+            case 'delete_student':
+                $this->handleDeleteStudent($student_id);
                 break;
 
             default:
@@ -627,6 +643,14 @@ class OSB_Admin_Menu {
     }
 
     /**
+     * Render debug tools page
+     */
+    public function renderDebugTools() {
+        include OSB_PLUGIN_PATH . 'admin-test-registration.php';
+        osb_test_registration_page();
+    }
+
+    /**
      * Render page template
      */
     private function renderPage($template, $data = array()) {
@@ -637,8 +661,8 @@ class OSB_Admin_Menu {
             include $template_file;
         } else {
             echo '<div class="wrap">';
-            echo '<h1>' . __('Page Not Found', 'omafuru-spelling-bee') . '</h1>';
-            echo '<p>' . sprintf(__('Template %s not found.', 'omafuru-spelling-bee'), $template) . '</p>';
+            echo '<h1>' . __('Page Not Found', 'spelling-bee-pro') . '</h1>';
+            echo '<p>' . sprintf(__('Template %s not found.', 'spelling-bee-pro'), $template) . '</p>';
             echo '</div>';
         }
     }
@@ -648,7 +672,7 @@ class OSB_Admin_Menu {
      */
     private function handleDeleteEvent() {
         if (!current_user_can('osb_manage_events')) {
-            wp_die(__('You do not have permission to delete events.', 'omafuru-spelling-bee'));
+            wp_die(__('You do not have permission to delete events.', 'spelling-bee-pro'));
         }
 
         $event_id = intval($_GET['event_id']);
@@ -658,11 +682,46 @@ class OSB_Admin_Menu {
     }
 
     /**
+     * Handle school deletion
+     */
+    private function handleDeleteSchool() {
+        if (!current_user_can('osb_manage_schools')) {
+            wp_die(__('You do not have permission to delete schools.', 'spelling-bee-pro'));
+        }
+
+        $school_id = intval($_GET['school_id']);
+        if (!$school_id) {
+            wp_die(__('Invalid school ID.', 'spelling-bee-pro'));
+        }
+
+        $db = OSB_Database::getInstance();
+
+        // Check if school has any registrations
+        $registrations = $db->getRegistrationsBySchool($school_id);
+        if (!empty($registrations)) {
+            wp_redirect(admin_url('admin.php?page=' . $this->menu_prefix . '-schools&error=has_registrations'));
+            exit;
+        }
+
+        // Delete the school
+        global $wpdb;
+        $table_name = $wpdb->prefix . OSB_TABLE_PREFIX . 'schools';
+        $deleted = $wpdb->delete($table_name, array('id' => $school_id), array('%d'));
+
+        if ($deleted) {
+            wp_redirect(admin_url('admin.php?page=' . $this->menu_prefix . '-schools&deleted=1'));
+        } else {
+            wp_redirect(admin_url('admin.php?page=' . $this->menu_prefix . '-schools&error=delete_failed'));
+        }
+        exit;
+    }
+
+    /**
      * Handle registration approval
      */
     private function handleApproveRegistration() {
         if (!current_user_can('osb_manage_registrations')) {
-            wp_die(__('You do not have permission to approve registrations.', 'omafuru-spelling-bee'));
+            wp_die(__('You do not have permission to approve registrations.', 'spelling-bee-pro'));
         }
 
         $registration_id = intval($_GET['registration_id']);
@@ -682,7 +741,7 @@ class OSB_Admin_Menu {
      */
     private function handleRejectRegistration() {
         if (!current_user_can('osb_manage_registrations')) {
-            wp_die(__('You do not have permission to reject registrations.', 'omafuru-spelling-bee'));
+            wp_die(__('You do not have permission to reject registrations.', 'spelling-bee-pro'));
         }
 
         $registration_id = intval($_GET['registration_id']);
@@ -704,7 +763,7 @@ class OSB_Admin_Menu {
      */
     private function handleResolveConflict() {
         if (!current_user_can('osb_resolve_conflicts')) {
-            wp_die(__('You do not have permission to resolve conflicts.', 'omafuru-spelling-bee'));
+            wp_die(__('You do not have permission to resolve conflicts.', 'spelling-bee-pro'));
         }
 
         $conflict_id = intval($_GET['conflict_id']);
@@ -728,7 +787,7 @@ class OSB_Admin_Menu {
      */
     private function saveSettings() {
         if (!current_user_can('osb_manage_settings')) {
-            wp_die(__('You do not have permission to save settings.', 'omafuru-spelling-bee'));
+            wp_die(__('You do not have permission to save settings.', 'spelling-bee-pro'));
         }
 
         // Save general settings
@@ -741,7 +800,10 @@ class OSB_Admin_Menu {
             'osb_require_parent_consent',
             'osb_auto_approve_schools',
             'osb_email_notifications_enabled',
-            'osb_donation_enabled'
+            'osb_donation_enabled',
+            'osb_recaptcha_site_key',
+            'osb_recaptcha_secret_key',
+            'osb_recaptcha_enabled'
         );
 
         foreach ($settings_to_save as $setting) {
@@ -766,7 +828,7 @@ class OSB_Admin_Menu {
         }
 
         if (!get_settings_errors('osb_settings')) {
-            add_settings_error('osb_settings', 'settings_saved', __('Settings saved successfully.', 'omafuru-spelling-bee'), 'updated');
+            add_settings_error('osb_settings', 'settings_saved', __('Settings saved successfully.', 'spelling-bee-pro'), 'updated');
         }
     }
 
@@ -791,5 +853,102 @@ class OSB_Admin_Menu {
         $args['_wpnonce'] = wp_create_nonce('osb_admin_action');
 
         return add_query_arg($args, $_SERVER['REQUEST_URI']);
+    }
+
+    /**
+     * Handle student deletion
+     */
+    private function handleDeleteStudent($student_id) {
+        // Verify nonce
+        if (!wp_verify_nonce($_GET['_wpnonce'], 'osb_admin_action')) {
+            wp_die(__('Security check failed.', 'spelling-bee-pro'));
+        }
+
+        // Check permissions
+        if (!current_user_can('osb_manage_students')) {
+            wp_die(__('You do not have permission to delete students.', 'spelling-bee-pro'));
+        }
+
+        if (!$student_id) {
+            wp_die(__('Invalid student ID.', 'spelling-bee-pro'));
+        }
+
+        $db = OSB_Database::getInstance();
+
+        // Get student info before deletion for logging
+        $student = $db->getStudent($student_id);
+        if (!$student) {
+            wp_die(__('Student not found.', 'spelling-bee-pro'));
+        }
+
+        // Delete the student
+        $result = $this->deleteStudent($student_id);
+
+        if ($result) {
+            // Log the deletion
+            error_log('[OSB] Student deleted: ' . $student->first_name . ' ' . $student->last_name . ' (ID: ' . $student_id . ')');
+
+            // Redirect with success message
+            $redirect_url = $this->getAdminUrl('students', array('deleted' => '1'));
+            wp_redirect($redirect_url);
+            exit;
+        } else {
+            wp_die(__('Failed to delete student.', 'spelling-bee-pro'));
+        }
+    }
+
+    /**
+     * Delete student and related data
+     */
+    private function deleteStudent($student_id) {
+        global $wpdb;
+        $table_prefix = $wpdb->prefix . OSB_TABLE_PREFIX;
+
+        // Start transaction
+        $wpdb->query('START TRANSACTION');
+
+        try {
+            // Delete related documents
+            $wpdb->delete(
+                "{$table_prefix}documents",
+                array('student_id' => $student_id),
+                array('%d')
+            );
+
+            // Delete WordPress user if linked
+            $student = $wpdb->get_row($wpdb->prepare(
+                "SELECT wp_user_id FROM {$table_prefix}students WHERE id = %d",
+                $student_id
+            ));
+
+            if ($student && $student->wp_user_id) {
+                // Only delete WordPress user if it has 'student' role
+                $wp_user = get_userdata($student->wp_user_id);
+                if ($wp_user && in_array('student', $wp_user->roles)) {
+                    wp_delete_user($student->wp_user_id);
+                }
+            }
+
+            // Delete student record
+            $result = $wpdb->delete(
+                "{$table_prefix}students",
+                array('id' => $student_id),
+                array('%d')
+            );
+
+            if ($result === false) {
+                throw new Exception('Failed to delete student record');
+            }
+
+            // Commit transaction
+            $wpdb->query('COMMIT');
+            return true;
+
+        } catch (Exception $e) {
+            // Rollback transaction
+            $wpdb->query('ROLLBACK');
+            error_log('[OSB] Failed to delete student ' . $student_id . ': ' . $e->getMessage());
+            return false;
+        }
     }
 }
